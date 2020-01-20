@@ -11,17 +11,20 @@ import {
 import { connect } from "react-redux";
 import { removeUserToken } from "../store/actions";
 
-class OtherScreen extends React.Component {
+class WarehouseItems extends React.Component {
   static navigationOptions = {
-    title: "Lots of features here"
+    title: "Items of Warehouse"
   };
-
+  seeDetail = item_id => {
+    this.props.navigation.navigate("ItemDetail");
+  };
   render() {
     return (
       <View style={styles.container}>
-        <Button title="I'm done, sign me out" onPress={this._signOutAsync} />
-        <StatusBar barStyle="default" />
-        <Text> Here is the user token {this.props.token.token}</Text>
+        <Text>
+          List of item in warehouse
+          <Text onPress={this.seeDetail}>Click here to see detail of Item</Text>
+        </Text>
       </View>
     );
   }
@@ -55,4 +58,4 @@ const mapDispatchToProps = dispatch => ({
   removeUserToken: () => dispatch(removeUserToken())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(OtherScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(WarehouseItems);

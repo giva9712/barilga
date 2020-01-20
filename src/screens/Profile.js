@@ -4,6 +4,10 @@ import { connect } from "react-redux";
 import { removeUserToken } from "../store/actions";
 
 class Profile extends Component {
+  static navigationOptions = {
+    title: "Миний"
+  };
+
   constructor(props) {
     super(props);
     // this.onLogout = this.onLogout.bind(this);

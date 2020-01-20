@@ -1,18 +1,43 @@
-import { createBottomTabNavigator } from "react-navigation";
+import {
+  createBottomTabNavigator,
+  createStackNavigator
+} from "react-navigation";
 
-import Dashboard from "../screens/Dashboard";
+import WarehouseList from "../screens/WarehouseList";
+import WarehouseItems from "../screens/WarehouseItems";
+import ItemDetail from "../screens/ItemDetail";
 import Profile from "../screens/Profile";
-import OtherScreen from "../screens/OtherScreen";
+
+const assetController = createStackNavigator({
+  WarehouseList: {
+    screen: WarehouseList
+  },
+  WarehouseItems: {
+    screen: WarehouseItems
+  },
+  ItemDetail: {
+    screen: ItemDetail
+  }
+});
+
+const profileController = createStackNavigator({
+  Profile: {
+    screen: Profile
+  }
+});
 
 const LoggedInNavigator = createBottomTabNavigator({
   Dashboard: {
-    screen: Dashboard
+    screen: assetController,
+    navigationOptions: {
+      title: "Хянах самбар"
+    }
   },
   Profile: {
-    screen: Profile
-  },
-  OtherScreen: {
-    screen: OtherScreen
+    screen: profileController,
+    navigationOptions: {
+      title: "Миний"
+    }
   }
 });
 

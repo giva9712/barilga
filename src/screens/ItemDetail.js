@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-export default class Dashboard extends Component {
+export default class ItemDetail extends Component {
+  static navigationOptions = {
+    title: "Banana"
+  };
   render() {
     return (
       <View style={styles.base}>
-        <Text>{"This is the logged in side"}</Text>
+        <Text>{"Item detail"}</Text>
       </View>
     );
   }

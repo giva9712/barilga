@@ -10,7 +10,7 @@ import {
 import { connect } from "react-redux";
 import { saveUserToken } from "../store/actions";
 
-class SignInScreen extends React.Component {
+class Login extends React.Component {
   static navigationOptions = {
     title: "Нэвтрэх",
     header: null
@@ -116,4 +116,4 @@ const mapDispatchToProps = dispatch => ({
   saveUserToken: () => dispatch(saveUserToken())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignInScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
