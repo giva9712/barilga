@@ -12,7 +12,8 @@ import { saveUserToken } from "../store/actions";
 
 class SignInScreen extends React.Component {
   static navigationOptions = {
-    title: "Нэвтрэх"
+    title: "Нэвтрэх",
+    header: null
   };
   state = {
     username: "",
@@ -54,7 +55,7 @@ class SignInScreen extends React.Component {
     this.props
       .saveUserToken()
       .then(() => {
-        this.props.navigation.navigate("App");
+        this.props.navigation.navigate("LoggedIn");
       })
       .catch(error => {
         this.setState({ error });

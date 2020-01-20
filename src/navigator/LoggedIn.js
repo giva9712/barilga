@@ -1,7 +1,8 @@
-import { createBottomTabNavigator } from "react-navigation-tabs";
+import { createBottomTabNavigator } from "react-navigation";
 
 import Dashboard from "../screens/Dashboard";
 import Profile from "../screens/Profile";
+import OtherScreen from "../screens/OtherScreen";
 
 const LoggedInNavigator = createBottomTabNavigator({
   Dashboard: {
@@ -9,6 +10,9 @@ const LoggedInNavigator = createBottomTabNavigator({
   },
   Profile: {
     screen: Profile
+  },
+  OtherScreen: {
+    screen: OtherScreen
   }
 });
 

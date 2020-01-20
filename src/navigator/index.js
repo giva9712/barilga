@@ -1,16 +1,21 @@
-import { createSwitchNavigator } from "react-navigation";
+import { createSwitchNavigator, createAppContainer } from "react-navigation";
 
 import LoggedOutNavigator from "./LoggedOut";
-// import LoggedInNavigator from "./LoggedIn";
+import LoggedInNavigator from "./LoggedIn";
 
-export const getRootNavigator = (loggedIn = false) =>
-  createSwitchNavigator(
-    {
-      LoggedOut: {
-        screen: LoggedOutNavigator
+export const getRootNavigator = () =>
+  createAppContainer(
+    createSwitchNavigator(
+      {
+        LoggedOut: {
+          screen: LoggedOutNavigator
+        },
+        LoggedIn: {
+          screen: LoggedInNavigator
+        }
+      },
+      {
+        initialRouteName: "LoggedOut"
       }
-    },
-    {
-      initialRouteName: "LoggedOut"
-    }
+    )
   );
