@@ -1,12 +1,18 @@
 import {
-  createBottomTabNavigator,
+  // createBottomTabNavigator,
   createStackNavigator
 } from "react-navigation";
+
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 
 import WarehouseList from "../screens/WarehouseList";
 import WarehouseItems from "../screens/WarehouseItems";
 import ItemDetail from "../screens/ItemDetail";
 import Profile from "../screens/Profile";
+
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+
+import React, { Component } from "react";
 
 const assetController = createStackNavigator({
   WarehouseList: {
@@ -26,19 +32,34 @@ const profileController = createStackNavigator({
   }
 });
 
-const LoggedInNavigator = createBottomTabNavigator({
-  Dashboard: {
-    screen: assetController,
-    navigationOptions: {
-      title: "Хянах самбар"
+const LoggedInNavigator = createMaterialBottomTabNavigator(
+  {
+    Dashboard: {
+      screen: assetController,
+      navigationOptions: {
+        tabBarLabel: "Warehouses",
+        tabBarIcon: ({ focused, horizontal, tintColor }) => (
+          <MaterialCommunityIcons
+            name="home-assistant"
+            size={25}
+            color={tintColor}
+          />
+        )
+      }
+    },
+    Profile: {
+      screen: profileController,
+      navigationOptions: {
+        tabBarLabel: "Profile",
+        tabBarIcon: ({ focused, horizontal, tintColor }) => (
+          <Ionicons name="md-settings" size={25} color={tintColor} />
+        )
+      }
     }
   },
-  Profile: {
-    screen: profileController,
-    navigationOptions: {
-      title: "Миний"
-    }
+  {
+    labeled: false
   }
-});
+);
 
 export default LoggedInNavigator;

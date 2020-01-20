@@ -5,6 +5,9 @@ export default class ItemDetail extends Component {
   static navigationOptions = {
     title: "Banana"
   };
+  constructor(props) {
+    super(props);
+  }
   render() {
     return (
       <View style={styles.base}>

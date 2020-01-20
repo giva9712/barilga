@@ -1,4 +1,4 @@
-import api from './api';
+import api from "./api";
 
 api.interceptors.request.use(
   config => {
@@ -13,21 +13,20 @@ api.interceptors.request.use(
     }
     return config;
   },
-  error => Promise.reject(error),
+  error => Promise.reject(error)
 );
 
 api.interceptors.response.use(
   response => {
-    console.log('Response:', response);
+    console.log("Response:", response);
     return response;
   },
   error => {
     if (error.response && error.response.status === 401) {
       //
-    }else if (error.response && error.response.status === 400) {
+    } else if (error.response && error.response.status === 400) {
       return Promise.reject(error);
     }
     return Promise.reject(error);
   }
 );
-

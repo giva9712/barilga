@@ -23,7 +23,7 @@ class Login extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.logo}>Барилга</Text>
+        <Text style={styles.logo}>Warehouse</Text>
         <View style={styles.inputView}>
           <TextInput
             style={styles.inputText}

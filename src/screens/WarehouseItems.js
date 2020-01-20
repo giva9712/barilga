@@ -10,34 +10,40 @@ import {
 
 import { connect } from "react-redux";
 import { removeUserToken } from "../store/actions";
+import PTRView from "react-native-pull-to-refresh";
 
 class WarehouseItems extends React.Component {
-  static navigationOptions = {
-    title: "Items of Warehouse"
-  };
+  static navigationOptions = ({ navigation }) => ({
+    title: `${navigation.state.params.name}`
+  });
+  constructor(props) {
+    super(props);
+  }
+
   seeDetail = item_id => {
     this.props.navigation.navigate("ItemDetail");
   };
   render() {
     return (
-      <View style={styles.container}>
-        <Text>
-          List of item in warehouse
-          <Text onPress={this.seeDetail}>Click here to see detail of Item</Text>
-        </Text>
-      </View>
+      <PTRView onRefresh={this._refresh}>
+        <View style={styles.container}>
+          <Text>
+            List of item in warehouse
+            <Text onPress={this.seeDetail}>
+              Click here to see detail of Item
+            </Text>
+          </Text>
+        </View>
+      </PTRView>
     );
   }
 
-  _signOutAsync = () => {
-    this.props
-      .removeUserToken()
-      .then(() => {
-        this.props.navigation.navigate("LoggedOut");
-      })
-      .catch(error => {
-        this.setState({ error });
-      });
+  _refresh = () => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
   };
 }
 
