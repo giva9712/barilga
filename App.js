@@ -5,6 +5,10 @@ import { getRootNavigator } from "./src/navigator";
 import store from "./src/store/index";
 import { getUserToken } from "./src/store/actions";
 
+import { AppLoading } from "expo";
+import * as Font from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -17,6 +21,11 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
+    await Font.loadAsync({
+      Roboto: require("native-base/Fonts/Roboto.ttf"),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
+      ...Ionicons.font
+    });
     const loggedIn = (await getUserToken()) ? true : false;
     this.setState({ loggedIn: loggedIn, loading: false });
   }
@@ -25,7 +34,7 @@ export default class App extends React.Component {
     if (this.state.loading) {
       return (
         <View style={styles.base}>
-          <ActivityIndicator size="small" />
+          <AppLoading size="small" />
         </View>
       );
     }

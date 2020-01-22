@@ -6,17 +6,21 @@ import {
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 
 import WarehouseList from "../screens/WarehouseList";
+import SearchWarehouse from "../screens/SearchWarehouse";
 import WarehouseItems from "../screens/WarehouseItems";
 import ItemDetail from "../screens/ItemDetail";
 import Profile from "../screens/Profile";
 
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
-import React, { Component } from "react";
+import React from "react";
 
 const assetController = createStackNavigator({
   WarehouseList: {
     screen: WarehouseList
+  },
+  SearchWarehouse: {
+    screen: SearchWarehouse
   },
   WarehouseItems: {
     screen: WarehouseItems

@@ -20,6 +20,8 @@ class Login extends React.Component {
     password: ""
   };
 
+  componentDidMount() {}
+
   render() {
     return (
       <View style={styles.container}>
