@@ -17,6 +17,8 @@
     "react-dom": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
     "react-native-gesture-handler": "~1.3.0",
+    "react-native-login-screen": "^0.3.2",
+    "react-native-numeric-input": "^1.8.3",
     "react-native-paper": "^3.4.0",
     "react-native-pull-to-refresh": "^2.1.3",
     "react-navigation": "^3.0",
@@ -24,7 +26,8 @@
     "react-navigation-material-bottom-tabs": "^2.1.5",
     "react-redux": "^7.1.3",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "toggle-switch-react-native": "^2.1.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^7.1.0"

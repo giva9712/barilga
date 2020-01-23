@@ -59,7 +59,7 @@ class WarehouseList extends Component {
     new Promise(resolve => {
       setTimeout(() => {
         resolve();
-      }, 2000);
+      }, 300);
     }).then(() => {
       this.setState({
         loading: false
@@ -90,18 +90,25 @@ class WarehouseList extends Component {
                 >
                   <Body>
                     <H3>{item.name}</H3>
-                    <View>
-                      <Text>Types: {item.category_count}</Text>
+                    {/* <View>
+                      <Text>Types:</Text>
+                      <Badge>{item.category_count}</Badge>
                       <Text>Items: {item.total_items_count}</Text>
-                    </View>
-                    <View style={styles.badges}>
+                    </View> */}
+                    {/* <View style={styles.badges}>
                       <Badge>
                         <Text>{item.description}</Text>
                       </Badge>
-                    </View>
+                    </View> */}
                   </Body>
                   <Right>
-                    <Icon name="arrow-forward" />
+                    {/* <Icon name="arrow-forward" /> */}
+                    {/* <Badge info>
+                      <Text>{item.types}</Text>
+                    </Badge> */}
+                    <Badge style={{ backgroundColor: "black" }}>
+                      <Text style={{ color: "white" }}>{item.total_items}</Text>
+                    </Badge>
                   </Right>
                 </ListItem>
               ))}
@@ -131,33 +138,50 @@ WarehouseList.defaultProps = {
       id: 1,
       name: "Warehouse 1",
       description: "Bairshil 1",
-      category_count: 1,
-      total_items_count: 123
+      types: 1,
+      total_items: 123
     },
     {
       id: 2,
       name: "Warehouse 2",
-      description: "Bairshil 2"
+      description: "Bairshil 2",
+      types: 4,
+      total_items: 521
     },
     {
       id: 3,
       name: "Warehouse 3",
-      description: "Bairshil 3"
+      description: "Bairshil 3",
+      types: 9,
+      total_items: 2313
     },
     {
       id: 4,
       name: "Warehouse 4",
-      description: "Bairshil 4"
+      description: "Bairshil 4",
+      types: 4,
+      total_items: 341
     },
     {
       id: 5,
       name: "Warehouse 5",
-      description: "Bairshil 5"
+      description: "Bairshil 5",
+      types: 7,
+      total_items: 5133
     },
     {
       id: 6,
       name: "Warehouse 6",
-      description: "Bairshil 6"
+      description: "Bairshil 6",
+      types: 2,
+      total_items: 5123
+    },
+    {
+      id: 7,
+      name: "Warehouse 7",
+      description: "Bairshil 7",
+      types: 8,
+      total_items: 412
     }
   ]
 };

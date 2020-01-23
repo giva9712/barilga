@@ -9,6 +9,8 @@ import { AppLoading } from "expo";
 import * as Font from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
 
+import { Root } from "native-base";
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -43,7 +45,9 @@ export default class App extends React.Component {
     return (
       <Provider store={store}>
         <View style={styles.container}>
-          <RootNavigator />
+          <Root>
+            <RootNavigator />
+          </Root>
         </View>
       </Provider>
     );

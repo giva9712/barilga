@@ -64,7 +64,7 @@ class WarehouseItems extends React.Component {
     new Promise(resolve => {
       setTimeout(() => {
         resolve();
-      }, 2000);
+      }, 300);
     }).then(() => {
       this.setState({
         WarehouseItems: [...this.props.WarehouseItems],
@@ -96,6 +96,7 @@ class WarehouseItems extends React.Component {
               androidRippleColor={{ color: "#eee" }}
               transparent
               rounded
+              large
               onPress={() => this.props.navigation.goBack()}
             >
               <Icon name="arrow-back" />
@@ -107,10 +108,20 @@ class WarehouseItems extends React.Component {
             </Title>
           </Body>
           <Right style={styles.flex}>
-            <PopupMenu
+            {/* <PopupMenu
               actions={["Refresh", "Bookmark"]}
               onPress={(e, i) => this._popMenuHandler(e, i)}
-            />
+            /> */}
+            <Button
+              dark
+              androidRippleColor={{ color: "#eee" }}
+              transparent
+              rounded
+              large
+              onPress={() => this._refresh()}
+            >
+              <Icon name="md-refresh" />
+            </Button>
           </Right>
         </Header>
         <Header searchBar rounded>
@@ -157,7 +168,7 @@ class WarehouseItems extends React.Component {
                         {item.location}
                       </Text> */}
                       <Text note numberOfLines={1}>
-                        <Entypo name="box" /> {item.stock}
+                        <Entypo name="box" /> Stock: {item.stock}
                       </Text>
                     </Body>
                     {/* <Right>
