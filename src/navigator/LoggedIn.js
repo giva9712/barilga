@@ -1,42 +1,61 @@
 import {
-  // createBottomTabNavigator,
+  createBottomTabNavigator,
   createStackNavigator
 } from "react-navigation";
 
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
-
 import WarehouseList from "../screens/WarehouseList";
-import SearchWarehouse from "../screens/SearchWarehouse";
-import WarehouseItems from "../screens/WarehouseItems";
-import ItemDetail from "../screens/ItemDetail";
-import Profile from "../screens/Profile";
+// import SearchWarehouse from "../screens/SearchWarehouse";
+import WarehouseItems from "../screens/WarehouseItems/WarehouseItems";
+import ItemDetail from "../screens/ItemDetail/ItemDetail";
+import Profile from "../screens/Profile/Profile";
 
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
+import { HomeBottomNavigation } from "../component/HomeBottomNavigation/HomeBottomNavigation";
+
 import React from "react";
 
-const assetController = createStackNavigator({
-  WarehouseList: {
-    screen: WarehouseList
+const assetController = createStackNavigator(
+  {
+    WarehouseList: {
+      screen: WarehouseList
+    },
+    // SearchWarehouse: {
+    //   screen: SearchWarehouse
+    // },
+    WarehouseItems: {
+      screen: WarehouseItems
+    },
+    ItemDetail: {
+      screen: ItemDetail
+    }
   },
-  SearchWarehouse: {
-    screen: SearchWarehouse
-  },
-  WarehouseItems: {
-    screen: WarehouseItems
-  },
-  ItemDetail: {
-    screen: ItemDetail
+  {
+    headerMode: "none"
   }
-});
+);
 
-const profileController = createStackNavigator({
-  Profile: {
-    screen: Profile
+const profileController = createStackNavigator(
+  {
+    Profile: {
+      screen: Profile
+    }
+  },
+  {
+    headerMode: "none"
   }
-});
+);
 
-const LoggedInNavigator = createMaterialBottomTabNavigator(
+// const BottomTab = createBottomTabNavigator();
+
+// const HomeTabsNavigator = () => (
+//   <BottomTab.Navigator initialRouteName={initialTabRoute}>
+//     <BottomTab.Screen name="Warehouses" component={assetController} />
+//     <BottomTab.Screen name="Profile" component={profileController} />
+//   </BottomTab.Navigator>
+// );
+
+const LoggedInNavigator = createBottomTabNavigator(
   {
     Dashboard: {
       screen: assetController,
@@ -62,7 +81,8 @@ const LoggedInNavigator = createMaterialBottomTabNavigator(
     }
   },
   {
-    labeled: false
+    labeled: false,
+    tabBarComponent: props => <HomeBottomNavigation {...props} />
   }
 );
 

@@ -1,124 +1,77 @@
-import React, { Component } from "react";
-import { StyleSheet, Platform, View } from "react-native";
+import React, { Component, useEffect, useState } from "react";
+import { StyleSheet, View, Text } from "react-native";
 import PTRView from "react-native-pull-to-refresh";
 
-import {
-  Right,
-  Left,
-  Content,
-  List,
-  ListItem,
-  H3,
-  Text,
-  Body,
-  Badge,
-  Icon,
-  Spinner
-} from "native-base";
-import { BorderlessButton } from "react-native-gesture-handler";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import SearchLayout from "react-navigation-addon-search-layout";
+import { TopNavigation, Spinner } from "@ui-kitten/components";
+import { SafeAreaLayout } from "../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
+import { LayoutList, LayoutListElement } from "../component/ListItem/ListItem";
 
-class WarehouseList extends Component {
-  _isMounted = false;
-  static navigationOptions = ({ navigation }) => ({
-    title: "Warehouses",
-    headerRight: (
-      <BorderlessButton
-        onPress={() => navigation.navigate("SearchWarehouse")}
-        style={{ marginRight: 15 }}
-      >
-        <Ionicons
-          name="md-search"
-          size={Platform.OS === "ios" ? 22 : 25}
-          color={SearchLayout.DefaultTintColor}
-        />
-      </BorderlessButton>
-    )
-  });
+const WarehouseList = props => {
+  const { navigation } = props;
 
-  constructor(props) {
-    super(props);
-  }
-  state = {
-    loading: false
-  };
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
 
-  componentDidMount() {
-    this._isMounted = true;
-    this._fetchData();
-  }
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+  useEffect(() => {
+    _isMounted = true;
+    _fetchData();
+  }, []);
 
-  _fetchData = () => {
-    this.setState({
-      loading: true
-    });
+  const _fetchData = () => {
+    setLoading(true);
     new Promise(resolve => {
       setTimeout(() => {
         resolve();
       }, 300);
     }).then(() => {
-      this.setState({
-        loading: false
-      });
+      setData([
+        {
+          title: "Агуулах 1",
+          description: "Шугам, хоолой"
+        },
+        {
+          title: "Агуулах 2",
+          description: "Шал"
+        },
+        {
+          title: "Агуулах 3",
+          description: "Будаг"
+        }
+      ]);
+      setLoading(false);
     });
   };
-  _gotoWarehouse = item => {
-    this.props.navigation.navigate("WarehouseItems", {
+  const _gotoWarehouse = item => {
+    navigation.navigate("WarehouseItems", {
       ...item
     });
   };
-  _refresh = () => {
-    this._fetchData();
+  const _refresh = () => {
+    _fetchData();
   };
-  render() {
-    return (
-      <PTRView onRefresh={this._refresh}>
-        <Content>
-          {this.state.loading ? (
-            <Spinner />
-          ) : (
-            <List>
-              {this.props.warehouses.map((item, index) => (
-                <ListItem
-                  button={true}
-                  onPress={() => this._gotoWarehouse(item)}
-                  key={index}
-                >
-                  <Body>
-                    <H3>{item.name}</H3>
-                    {/* <View>
-                      <Text>Types:</Text>
-                      <Badge>{item.category_count}</Badge>
-                      <Text>Items: {item.total_items_count}</Text>
-                    </View> */}
-                    {/* <View style={styles.badges}>
-                      <Badge>
-                        <Text>{item.description}</Text>
-                      </Badge>
-                    </View> */}
-                  </Body>
-                  <Right>
-                    {/* <Icon name="arrow-forward" /> */}
-                    {/* <Badge info>
-                      <Text>{item.types}</Text>
-                    </Badge> */}
-                    <Badge style={{ backgroundColor: "black" }}>
-                      <Text style={{ color: "white" }}>{item.total_items}</Text>
-                    </Badge>
-                  </Right>
-                </ListItem>
-              ))}
-            </List>
-          )}
-        </Content>
+
+  return (
+    <SafeAreaLayout insets="top" level="2">
+      <PTRView onRefresh={_refresh}>
+        <TopNavigation title="Агуулах" alignment="center" />
+        {loading ? (
+          <View
+            style={{
+              paddingVertical: 30,
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Spinner size="giant" />
+          </View>
+        ) : (
+          <LayoutList data={data} onItemPress={_gotoWarehouse} />
+        )}
       </PTRView>
-    );
-  }
-}
+    </SafeAreaLayout>
+  );
+};
 
 const styles = StyleSheet.create({
   base: {
