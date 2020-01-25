@@ -16,6 +16,10 @@ const AccountSettings = style => (
   <Icon {...style} name="account-settings" pack="material-community" />
 );
 
+const History = style => (
+  <Icon {...style} name="history" pack="material-community" />
+);
+
 export const HomeBottomNavigation = props => {
   const onSelect = index => {
     props.navigation.navigate(
@@ -32,6 +36,7 @@ export const HomeBottomNavigation = props => {
         onSelect={onSelect}
       >
         <BottomNavigationTab title="Агуулах" icon={HomeAssistantIcon} />
+        <BottomNavigationTab title="Түүх" icon={History} />
         <BottomNavigationTab title="Миний" icon={AccountSettings} />
       </BrandBottomNavigation>
     </SafeAreaLayout>

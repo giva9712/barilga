@@ -8,6 +8,7 @@ import WarehouseList from "../screens/WarehouseList";
 import WarehouseItems from "../screens/WarehouseItems/WarehouseItems";
 import ItemDetail from "../screens/ItemDetail/ItemDetail";
 import Profile from "../screens/Profile/Profile";
+import History from "../screens/History/History";
 
 import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
@@ -46,6 +47,17 @@ const profileController = createStackNavigator(
   }
 );
 
+const historyController = createStackNavigator(
+  {
+    History: {
+      screen: History
+    }
+  },
+  {
+    headerMode: "none"
+  }
+);
+
 // const BottomTab = createBottomTabNavigator();
 
 // const HomeTabsNavigator = () => (
@@ -58,26 +70,13 @@ const profileController = createStackNavigator(
 const LoggedInNavigator = createBottomTabNavigator(
   {
     Dashboard: {
-      screen: assetController,
-      navigationOptions: {
-        tabBarLabel: "Warehouses",
-        tabBarIcon: ({ focused, horizontal, tintColor }) => (
-          <MaterialCommunityIcons
-            name="home-assistant"
-            size={25}
-            color={tintColor}
-          />
-        )
-      }
+      screen: assetController
+    },
+    History: {
+      screen: historyController
     },
     Profile: {
-      screen: profileController,
-      navigationOptions: {
-        tabBarLabel: "Profile",
-        tabBarIcon: ({ focused, horizontal, tintColor }) => (
-          <Ionicons name="md-settings" size={25} color={tintColor} />
-        )
-      }
+      screen: profileController
     }
   },
   {

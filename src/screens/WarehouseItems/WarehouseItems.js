@@ -141,12 +141,14 @@ const WarehouseItems = props => {
   };
 
   useEffect(() => {
-    if (searchQuery) {
+    if (searchQuery && searchQuery != "") {
       setProducts(
         _.filter(datas[navigation.state.params.item.id], function(el) {
           return el.title.toLowerCase().includes(searchQuery.toLowerCase());
         })
       );
+    } else {
+      setProducts(datas[navigation.state.params.item.id]);
     }
   }, [searchQuery]);
 
@@ -167,7 +169,7 @@ const WarehouseItems = props => {
           {showSearch && (
             <Input
               style={styles.searchInput}
-              placeholder="Search"
+              placeholder="Хайх"
               onChangeText={text => setSearchQuery(text)}
               value={searchQuery}
               icon={SearchIcon}

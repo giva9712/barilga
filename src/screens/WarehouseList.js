@@ -13,7 +13,6 @@ const WarehouseList = props => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    _isMounted = true;
     _fetchData();
   }, []);
 
