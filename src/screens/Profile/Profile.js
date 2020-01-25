@@ -19,12 +19,12 @@ const Profile = props => {
   const safeArea = useSafeArea();
 
   const profile = {
-    firstName: "Jennifer",
-    lastName: "Green",
+    firstName: "Татах-хүч",
+    lastName: "Соронзон-Болд",
     photo: require("./assets/profile.jpg"),
-    Gender: "Female",
-    email: "jen.green@gmail.com",
-    phoneNumber: "+375 44 846 97 68"
+    Gender: "Эрэгтэй",
+    email: "magnet-power@gmail.com",
+    phoneNumber: "+976 9181 1504"
   };
 
   _showMoreApp = () => {

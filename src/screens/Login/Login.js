@@ -12,6 +12,14 @@ import { ImageOverlay } from "./extra/image-overlay.component";
 // } from "./extra/icons";
 import { KeyboardAvoidingView } from "./extra/3rd-party";
 
+const PersonIcon = style => (
+  <Icon {...style} name="ios-person" pack="ionicons" />
+);
+
+const EyeOffIcon = style => (
+  <Icon {...style} name="md-eye-off" pack="ionicons" />
+);
+
 export default ({ navigation }) => {
   const [email, setEmail] = React.useState();
   const [password, setPassword] = React.useState();
@@ -55,6 +63,7 @@ export default ({ navigation }) => {
             placeholder="Нэвтрэх нэр"
             value={email}
             onChangeText={setEmail}
+            icon={PersonIcon}
           />
           <Input
             style={styles.passwordInput}
@@ -64,6 +73,7 @@ export default ({ navigation }) => {
             secureTextEntry={!passwordVisible}
             onChangeText={setPassword}
             onIconPress={onPasswordIconPress}
+            icon={EyeOffIcon}
           />
           <View style={styles.forgotPasswordContainer}>
             {/* <Button

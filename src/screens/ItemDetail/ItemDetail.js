@@ -69,7 +69,7 @@ const ItemDetail = props => {
     <SafeAreaLayout insets="top" level="2">
       <PTRView onRefresh={_refresh}>
         <TopNavigation
-          title="Барааны жагсаалт"
+          title={navigation.state.params.item.title}
           alignment="center"
           leftControl={renderBackAction()}
         />
@@ -95,7 +95,7 @@ const ItemDetail = props => {
             >
               <Image
                 source={itemDetail.image}
-                style={{ height: 300, width: 300, flex: 1 }}
+                style={{ height: 260, width: 260, flex: 1 }}
               />
             </View>
             <View
@@ -165,9 +165,10 @@ const ItemDetail = props => {
             </View>
             <View
               style={{
-                marginTop: 30,
+                // marginTop: 30,
                 justifyContent: "center",
-                alignItems: "center"
+                alignItems: "center",
+                paddingVertical: 30
               }}
             >
               <Button onPress={() => _saveUpdates()}>Хадгалах</Button>

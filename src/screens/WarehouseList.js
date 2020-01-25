@@ -26,14 +26,17 @@ const WarehouseList = props => {
     }).then(() => {
       setData([
         {
+          id: 1,
           title: "Агуулах 1",
           description: "Шугам, хоолой"
         },
         {
+          id: 2,
           title: "Агуулах 2",
           description: "Шал"
         },
         {
+          id: 3,
           title: "Агуулах 3",
           description: "Будаг"
         }
@@ -85,58 +88,6 @@ const styles = StyleSheet.create({
   }
 });
 
-WarehouseList.defaultProps = {
-  warehouses: [
-    {
-      id: 1,
-      name: "Warehouse 1",
-      description: "Bairshil 1",
-      types: 1,
-      total_items: 123
-    },
-    {
-      id: 2,
-      name: "Warehouse 2",
-      description: "Bairshil 2",
-      types: 4,
-      total_items: 521
-    },
-    {
-      id: 3,
-      name: "Warehouse 3",
-      description: "Bairshil 3",
-      types: 9,
-      total_items: 2313
-    },
-    {
-      id: 4,
-      name: "Warehouse 4",
-      description: "Bairshil 4",
-      types: 4,
-      total_items: 341
-    },
-    {
-      id: 5,
-      name: "Warehouse 5",
-      description: "Bairshil 5",
-      types: 7,
-      total_items: 5133
-    },
-    {
-      id: 6,
-      name: "Warehouse 6",
-      description: "Bairshil 6",
-      types: 2,
-      total_items: 5123
-    },
-    {
-      id: 7,
-      name: "Warehouse 7",
-      description: "Bairshil 7",
-      types: 8,
-      total_items: 412
-    }
-  ]
-};
+WarehouseList.defaultProps = {};
 
 export default WarehouseList;

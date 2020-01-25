@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import MaterialCommunityIconsParent from "@expo/vector-icons/MaterialCommunityIcons";
 import IoniconsParent from "@expo/vector-icons/Ionicons";
+import FeatherIconsParent from "@expo/vector-icons/Feather";
 
 export const MaterialCommunityIcons = {
   name: "material-community",
@@ -59,6 +60,38 @@ function IoniconsIcons({ name, style }) {
   const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
   return (
     <IoniconsParent
+      name={name}
+      size={height}
+      color={tintColor}
+      style={iconStyle}
+    />
+  );
+}
+
+export const FeatherIcons = {
+  name: "feather",
+  icons: FeatherIconscreateIconsMap()
+};
+
+function FeatherIconscreateIconsMap() {
+  return new Proxy(
+    {},
+    {
+      get(target, name) {
+        return FeatherIconsIconProvider(name);
+      }
+    }
+  );
+}
+
+const FeatherIconsIconProvider = name => ({
+  toReactElement: props => FeatherIconsIcons({ name, ...props })
+});
+
+function FeatherIconsIcons({ name, style }) {
+  const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
+  return (
+    <FeatherIconsParent
       name={name}
       size={height}
       color={tintColor}

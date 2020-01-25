@@ -1,5 +1,5 @@
 import React, { Component, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import PTRView from "react-native-pull-to-refresh";
 
 import {
@@ -9,16 +9,69 @@ import {
   List,
   Text,
   Spinner,
-  Icon
+  Icon,
+  Input
 } from "@ui-kitten/components";
 import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
-import { LayoutList } from "../../component/ListItem/ListItem";
-import { Ionicons } from "@expo/vector-icons";
 import { Item } from "./extra/Item";
+
+import _ from "lodash";
+
+const datas = {
+  1: [
+    {
+      id: 1,
+      title: "Тоосго",
+      subtitle: "Материал",
+      image: {
+        uri: "https://www.sabatradebd.com/wp-content/uploads/2015/12/81.jpg"
+      },
+      price: 123,
+      amount: 5300
+    },
+    {
+      id: 2,
+      title: "Төмөр",
+      subtitle: "Материал",
+      image: {
+        uri:
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr_JK2aov6C_ZaTV_mOerk_Dl0fm92Hhkgf42M-jc7lmXGD1Ok&s"
+      },
+      price: 123,
+      amount: 1500
+    },
+    {
+      id: 3,
+      title: "Hooloi",
+      subtitle: "Шугам, хоолой",
+      image: {
+        uri:
+          "https://www.borghesegardens.com/wp-content/uploads/2019/01/plumbing-pipes.png"
+      },
+      price: 123,
+      amount: 1120
+    },
+    {
+      id: 4,
+      title: "Hollow Polycarbonate",
+      subtitle: "Материал",
+      image: {
+        uri:
+          "https://image.made-in-china.com/202f0j00fKJtMbQaqRYc/High-Light-Building-Materials-Hollow-Polycarbonate-PC-Roofing-Sheet.jpg"
+      },
+      price: 123,
+      amount: 800
+    }
+  ],
+  2: [],
+  3: []
+};
 
 const IOSArrowBack = style => (
   <Icon {...style} name="ios-arrow-back" pack="ionicons" />
 );
+
+const SearchIcon = style => <Icon {...style} name="search" pack="feather" />;
 
 const WarehouseItems = props => {
   const { navigation } = props;
@@ -32,6 +85,8 @@ const WarehouseItems = props => {
 
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchQuery, setSearchQuery] = useState();
 
   useEffect(() => {
     _isMounted = true;
@@ -46,40 +101,7 @@ const WarehouseItems = props => {
       }, 300);
     }).then(() => {
       setLoading(false);
-      setProducts([
-        {
-          id: 1,
-          title: "Бараа 1",
-          subtitle: "Шугам, хоолой",
-          image: {
-            uri: "https://www.sabatradebd.com/wp-content/uploads/2015/12/81.jpg"
-          },
-          price: 123,
-          amount: 3
-        },
-        {
-          id: 2,
-          title: "Бараа 2",
-          subtitle: "Шугам, хоолой",
-          image: {
-            uri:
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr_JK2aov6C_ZaTV_mOerk_Dl0fm92Hhkgf42M-jc7lmXGD1Ok&s"
-          },
-          price: 123,
-          amount: 3
-        },
-        {
-          id: 1,
-          title: "Бараа 3",
-          subtitle: "Шугам, хоолой",
-          image: {
-            uri:
-              "https://www.borghesegardens.com/wp-content/uploads/2019/01/plumbing-pipes.png"
-          },
-          price: 123,
-          amount: 3
-        }
-      ]);
+      setProducts(datas[navigation.state.params.item.id]);
     });
   };
 
@@ -114,14 +136,50 @@ const WarehouseItems = props => {
     />
   );
 
+  const showSearchSection = () => {
+    setShowSearch(!showSearch);
+  };
+
+  useEffect(() => {
+    if (searchQuery) {
+      setProducts(
+        _.filter(datas[navigation.state.params.item.id], function(el) {
+          return el.title.toLowerCase().includes(searchQuery.toLowerCase());
+        })
+      );
+    }
+  }, [searchQuery]);
+
+  const renderSearchAction = () => (
+    <TopNavigationAction icon={SearchIcon} onPress={showSearchSection} />
+  );
+
   return (
     <SafeAreaLayout insets="top" level="2">
+      <TopNavigation
+        title="Барааны жагсаалт"
+        alignment="center"
+        leftControl={renderBackAction()}
+        rightControls={renderSearchAction()}
+      />
       <PTRView onRefresh={_refresh}>
-        <TopNavigation
-          title="Барааны жагсаалт"
-          alignment="center"
-          leftControl={renderBackAction()}
-        />
+        <View style={{ flex: 1 }}>
+          {showSearch && (
+            <Input
+              style={styles.searchInput}
+              placeholder="Search"
+              onChangeText={text => setSearchQuery(text)}
+              value={searchQuery}
+              icon={SearchIcon}
+            />
+          )}
+
+          {products.length > 0 && (
+            <Text style={styles.headerTitle} appearance="hint">
+              {navigation.state.params.item.title}-ын бараанууд
+            </Text>
+          )}
+        </View>
         {loading ? (
           <View
             style={{
@@ -134,14 +192,11 @@ const WarehouseItems = props => {
             <Spinner size="giant" />
           </View>
         ) : (
-          <View>
-            {products.length > 0 && (
-              <Text style={styles.headerTitle} appearance="hint">
-                {navigation.state.params.item.title}-ын бараанууд
-              </Text>
-            )}
-            <List data={products} renderItem={renderProductItem} />
-          </View>
+          <ScrollView style={styles.container}>
+            <View style={{ flex: 1 }}>
+              <List data={products} renderItem={renderProductItem} />
+            </View>
+          </ScrollView>
         )}
         {/* <Button style={styles.checkoutButton} size="giant">
           CHECKOUT
@@ -156,6 +211,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 20
   },
+  searchInput: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8
+  },
+  container: {
+    flex: 1,
+    paddingBottom: 70
+  },
   base: {
     paddingTop: 15
   },
@@ -167,58 +231,6 @@ const styles = StyleSheet.create({
   }
 });
 
-WarehouseItems.defaultProps = {
-  warehouses: [
-    {
-      id: 1,
-      name: "Warehouse 1",
-      description: "Bairshil 1",
-      types: 1,
-      total_items: 123
-    },
-    {
-      id: 2,
-      name: "Warehouse 2",
-      description: "Bairshil 2",
-      types: 4,
-      total_items: 521
-    },
-    {
-      id: 3,
-      name: "Warehouse 3",
-      description: "Bairshil 3",
-      types: 9,
-      total_items: 2313
-    },
-    {
-      id: 4,
-      name: "Warehouse 4",
-      description: "Bairshil 4",
-      types: 4,
-      total_items: 341
-    },
-    {
-      id: 5,
-      name: "Warehouse 5",
-      description: "Bairshil 5",
-      types: 7,
-      total_items: 5133
-    },
-    {
-      id: 6,
-      name: "Warehouse 6",
-      description: "Bairshil 6",
-      types: 2,
-      total_items: 5123
-    },
-    {
-      id: 7,
-      name: "Warehouse 7",
-      description: "Bairshil 7",
-      types: 8,
-      total_items: 412
-    }
-  ]
-};
+WarehouseItems.defaultProps = {};
 
 export default WarehouseItems;

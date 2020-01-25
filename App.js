@@ -19,7 +19,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import {
   MaterialCommunityIcons,
-  Ionicons
+  Ionicons,
+  FeatherIcons
 } from "./src/component/IconMapper/IconMapper";
 
 const theme = { ...lightTheme, ...appTheme };
@@ -55,7 +56,12 @@ export default class App extends React.Component {
       <Provider store={store}>
         <SafeAreaProvider>
           <IconRegistry
-            icons={[EvaIconsPack, MaterialCommunityIcons, Ionicons]}
+            icons={[
+              EvaIconsPack,
+              MaterialCommunityIcons,
+              Ionicons,
+              FeatherIcons
+            ]}
           />
           <View style={styles.container}>
             <ApplicationProvider mapping={mapping} theme={theme}>
