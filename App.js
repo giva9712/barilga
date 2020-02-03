@@ -1,81 +1,56 @@
-import React from "react";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 import { Provider } from "react-redux";
-import { getRootNavigator } from "./src/navigator";
-import store from "./src/store/index";
-import { getUserToken } from "./src/store/actions";
 
-import { AppLoading } from "expo";
+import { store, persistor } from "./src/store/index";
+import { PersistGate } from "redux-persist/integration/react";
 
-import { EvaIconsPack } from "@ui-kitten/eva-icons";
-import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
-import { mapping, light as lightTheme } from "@eva-design/eva";
+import { AppLoading, SplashScreen } from "expo";
+import { Asset } from "expo-asset";
 
 import { YellowBox } from "react-native";
 
-import { default as appTheme } from "./custom-theme.json";
+import Main from "./src/Main";
 
-import { SafeAreaProvider } from "react-native-safe-area-context";
-
-import {
-  MaterialCommunityIcons,
-  Ionicons,
-  FeatherIcons
-} from "./src/component/IconMapper/IconMapper";
-
-const theme = { ...lightTheme, ...appTheme };
 YellowBox.ignoreWarnings(["Warning: ..."]);
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    console.disableYellowBox = true;
+const App = () => {
+  const [loading, setLoading] = useState(true);
 
-    this.state = {
-      loading: true,
-      loggedIn: false
-    };
-  }
+  _cacheResourcesAsync = async () => {
+    const images = [
+      require("./assets/images/bg.jpg"),
+      require("./assets/images/logo.jpg")
+    ];
 
-  async componentDidMount() {
-    const loggedIn = (await getUserToken()) ? true : false;
-    this.setState({ loggedIn: loggedIn, loading: false });
-  }
+    const cacheImages = images.map(image => {
+      return Asset.fromModule(image).downloadAsync();
+    });
 
-  render() {
-    if (this.state.loading) {
-      return (
-        <View style={styles.base}>
-          <AppLoading size="small" />
-        </View>
-      );
-    }
+    await Promise.all(cacheImages);
+    SplashScreen.hide();
+  };
 
-    const RootNavigator = getRootNavigator(this.state.loggedIn);
+  useEffect(() => {
+    setLoading(false);
+    _cacheResourcesAsync();
+  }, []);
+
+  if (loading) {
     return (
-      <Provider store={store}>
-        <SafeAreaProvider>
-          <IconRegistry
-            icons={[
-              EvaIconsPack,
-              MaterialCommunityIcons,
-              Ionicons,
-              FeatherIcons
-            ]}
-          />
-          <View style={styles.container}>
-            <ApplicationProvider mapping={mapping} theme={theme}>
-              <RootNavigator />
-            </ApplicationProvider>
-          </View>
-        </SafeAreaProvider>
-      </Provider>
+      <View>
+        <AppLoading size="small" autoHideSplash={false} />
+      </View>
     );
   }
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  }
-});
+  return (
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <Main />
+      </PersistGate>
+    </Provider>
+  );
+};
+
+export default App;

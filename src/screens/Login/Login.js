@@ -1,16 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Input, Text, Icon } from "@ui-kitten/components";
 import { ImageOverlay } from "./extra/image-overlay.component";
-// import {
-//   EyeIcon,
-//   EyeOffIcon,
-//   // FacebookIcon,
-//   // GoogleIcon,
-//   PersonIcon
-//   // TwitterIcon
-// } from "./extra/icons";
 import { KeyboardAvoidingView } from "./extra/3rd-party";
+
+import { connect } from "react-redux";
+import { saveUserToken } from "../../store/actions";
+import api from "../../provider/interceptors";
+import Loader from "../../component/Loader/Loader";
 
 const PersonIcon = style => (
   <Icon {...style} name="ios-person" pack="ionicons" />
@@ -20,21 +17,29 @@ const EyeOffIcon = style => (
   <Icon {...style} name="md-eye-off" pack="ionicons" />
 );
 
-export default ({ navigation }) => {
-  const [email, setEmail] = React.useState();
-  const [password, setPassword] = React.useState();
-  const [passwordVisible, setPasswordVisible] = React.useState(false);
+const Login = props => {
+  const { navigation } = props;
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSignInButtonPress = () => {
-    navigation && navigation.navigate("LoggedIn");
-  };
-
-  const onSignUpButtonPress = () => {
-    navigation && navigation.navigate("SignUp4");
-  };
-
-  const onForgotPasswordButtonPress = () => {
-    navigation && navigation.navigate("ForgotPassword");
+    setLoading(true);
+    api
+      .post("/login", {
+        email,
+        password,
+        role: 3
+      })
+      .then(res => {
+        props.saveAuthInfo(res.data);
+        setLoading(false);
+        navigation.navigate("LoggedIn");
+      })
+      .catch(err => {
+        props.setLoading(false);
+      });
   };
 
   const onPasswordIconPress = () => {
@@ -43,9 +48,10 @@ export default ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView>
+      <Loader loading={loading} />
       <ImageOverlay
         style={styles.container}
-        source={require("./assets/bg.jpg")}
+        source={require("../../../assets/images/bg.jpg")}
       >
         <View style={styles.headerContainer}>
           <Image
@@ -54,13 +60,13 @@ export default ({ navigation }) => {
               height: 200,
               resizeMode: "stretch"
             }}
-            source={require("./assets/logo.jpg")}
+            source={require("../../../assets/images/logo.jpg")}
           />
         </View>
         <View style={styles.formContainer}>
           <Input
             status="control"
-            placeholder="Нэвтрэх нэр"
+            placeholder="Имэйл"
             value={email}
             onChangeText={setEmail}
             icon={PersonIcon}
@@ -178,3 +184,12 @@ const styles = StyleSheet.create({
     marginBottom: 16
   }
 });
+
+const mapStateToProps = state => state;
+
+const mapDispatchToProps = dispatch => ({
+  saveUserToken: authInfo => dispatch(saveUserToken(authInfo))
+});
+
+export default connect(null, mapDispatchToProps)(Login);
+// export default Login;

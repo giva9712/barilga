@@ -3,7 +3,7 @@ import { createSwitchNavigator, createAppContainer } from "react-navigation";
 import LoggedOutNavigator from "./LoggedOut";
 import LoggedInNavigator from "./LoggedIn";
 
-export const getRootNavigator = () =>
+export const getRootNavigator = isLogged =>
   createAppContainer(
     createSwitchNavigator(
       {

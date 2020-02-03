@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import { removeUserToken } from "../../store/actions";
+import { removeAuthInfo } from "../../store/actions";
 
 import {
   Button,
@@ -17,6 +17,7 @@ import { ProfileSetting } from "./extra/ProfileSetting";
 const Profile = props => {
   const { navigation } = props;
   const safeArea = useSafeArea();
+  console.log(props.auth);
 
   const profile = {
     firstName: "Татах-хүч",
@@ -28,14 +29,14 @@ const Profile = props => {
   };
 
   _showMoreApp = () => {
-    props.navigation.navigate("Other");
+    navigation.navigate("Other");
   };
 
   _signOutAsync = () => {
     props
-      .removeUserToken()
+      .removeAuthInfo()
       .then(() => {
-        props.navigation.navigate("LoggedOut");
+        navigation.navigate("LoggedOut");
       })
       .catch(error => {});
   };
@@ -70,7 +71,7 @@ const Profile = props => {
         hint="Утас"
         value={profile.phoneNumber}
       />
-      <Button style={styles.doneButton} onPress={this._signOutAsync}>
+      <Button style={styles.doneButton} onPress={_signOutAsync}>
         Гарах
       </Button>
     </Layout>
@@ -106,11 +107,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  token: state.token
+  auth: state.auth.auth
 });
 
 const mapDispatchToProps = dispatch => ({
-  removeUserToken: () => dispatch(removeUserToken())
+  removeAuthInfo: () => dispatch(removeAuthInfo())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

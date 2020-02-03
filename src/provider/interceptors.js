@@ -1,12 +1,14 @@
 import api from "./api";
 
+import store from "../store";
+
+import { loading } from "../store/actions";
+
 api.interceptors.request.use(
   config => {
-    console.log(config);
-    //const {auth} = store.getState();
-    const user = null;
-    if (user) {
-      const token = `Bearer ${user.access_token}`;
+    const { auth } = store.getState();
+    if (auth) {
+      const token = `Bearer ${auth.token}`;
       if (token) {
         config.headers.Authorization = `${token}`;
       }
@@ -18,7 +20,6 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   response => {
-    console.log("Response:", response);
     return response;
   },
   error => {
@@ -30,3 +31,5 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export default api;
