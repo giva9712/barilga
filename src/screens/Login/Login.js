@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View, Image, ToastAndroid } from "react-native";
 import { Button, Input, Text, Icon } from "@ui-kitten/components";
 import { ImageOverlay } from "./extra/image-overlay.component";
 import { KeyboardAvoidingView } from "./extra/3rd-party";
 
 import { connect } from "react-redux";
-import { saveUserToken } from "../../store/actions";
+import { saveToken, saveUserInfo } from "../../store/actions";
 import api from "../../provider/interceptors";
 import Loader from "../../component/Loader/Loader";
 
@@ -19,10 +19,11 @@ const EyeOffIcon = style => (
 
 const Login = props => {
   const { navigation } = props;
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("Gdsc@test.com");
+  const [password, setPassword] = useState("1234");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  useEffect(() => {}, []);
 
   const onSignInButtonPress = () => {
     setLoading(true);
@@ -33,12 +34,28 @@ const Login = props => {
         role: 3
       })
       .then(res => {
-        props.saveAuthInfo(res.data);
         setLoading(false);
-        navigation.navigate("LoggedIn");
+        // console.log(res);
+
+        if (res.data.error) {
+          ToastAndroid.showWithGravityAndOffset(
+            res.data.error,
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER,
+            25,
+            50
+          );
+        }
+        if (res.data.token) {
+          let { token, ...userInfo } = res.data;
+          props.saveToken(token);
+          props.saveUserInfo(userInfo);
+          navigation.navigate("LoggedIn");
+        }
       })
       .catch(err => {
-        props.setLoading(false);
+        console.log(err);
+        setLoading(false);
       });
   };
 
@@ -81,16 +98,6 @@ const Login = props => {
             onIconPress={onPasswordIconPress}
             icon={EyeOffIcon}
           />
-          <View style={styles.forgotPasswordContainer}>
-            {/* <Button
-              style={styles.forgotPasswordButton}
-              appearance="ghost"
-              status="control"
-              onPress={onForgotPasswordButtonPress}
-            >
-              Forgot your password?
-            </Button> */}
-          </View>
         </View>
         <Button
           style={styles.signInButton}
@@ -99,39 +106,6 @@ const Login = props => {
         >
           Нэвтрэх
         </Button>
-        {/* <View style={styles.socialAuthContainer}>
-          <Text style={styles.socialAuthHintText} status="control">
-            Or Sign In using Social Media
-          </Text>
-          <View style={styles.socialAuthButtonsContainer}>
-            <Button
-              appearance="ghost"
-              status="control"
-              size="giant"
-              icon={GoogleIcon}
-            />
-            <Button
-              appearance="ghost"
-              status="control"
-              size="giant"
-              icon={FacebookIcon}
-            />
-            <Button
-              appearance="ghost"
-              status="control"
-              size="giant"
-              icon={TwitterIcon}
-            />
-          </View>
-        </View> */}
-        {/* <Button
-          style={styles.signUpButton}
-          appearance="ghost"
-          status="control"
-          onPress={onSignUpButtonPress}
-        >
-          Don't have an account? Sign Up
-        </Button> */}
       </ImageOverlay>
     </KeyboardAvoidingView>
   );
@@ -161,34 +135,14 @@ const styles = StyleSheet.create({
   signInButton: {
     marginHorizontal: 16,
     marginVertical: 50
-  },
-  forgotPasswordContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end"
-  },
-  forgotPasswordButton: {
-    paddingHorizontal: 0
-  },
-  signUpButton: {
-    marginVertical: 12
-  },
-  socialAuthContainer: {
-    marginTop: 32
-  },
-  socialAuthButtonsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-evenly"
-  },
-  socialAuthHintText: {
-    alignSelf: "center",
-    marginBottom: 16
   }
 });
 
 const mapStateToProps = state => state;
 
 const mapDispatchToProps = dispatch => ({
-  saveUserToken: authInfo => dispatch(saveUserToken(authInfo))
+  saveToken: token => dispatch(saveToken(token)),
+  saveUserInfo: userInfo => dispatch(saveUserInfo(userInfo))
 });
 
 export default connect(null, mapDispatchToProps)(Login);

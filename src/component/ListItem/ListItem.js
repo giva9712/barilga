@@ -14,7 +14,7 @@ export const LayoutList = props => {
 
   const renderItem = info => (
     <Card style={styles.itemContainer} onPress={() => onItemPress(info)}>
-      <Text category="s1">{info.item.title}</Text>
+      <Text category="s1">{info.item.name}</Text>
       <Text style={styles.itemDescription} appearance="hint">
         {info.item.description}
       </Text>

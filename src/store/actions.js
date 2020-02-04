@@ -1,8 +1,6 @@
-import { AsyncStorage } from "react-native";
-
-export const getToken = token => ({
-  type: "GET_TOKEN",
-  token
+export const saveUserInfo = userInfo => ({
+  type: "SAVE_USER_INFO",
+  userInfo
 });
 
 export const saveToken = token => ({
@@ -24,35 +22,7 @@ export const error = error => ({
   error
 });
 
-export const getUserToken = () => dispatch =>
-  AsyncStorage.getItem("userToken")
-    .then(data => {
-      dispatch(loading(false));
-      dispatch(getToken(data));
-    })
-    .catch(err => {
-      dispatch(loading(false));
-      dispatch(error(err.message || "ERROR"));
-    });
-
-export const saveUserToken = data => dispatch =>
-  AsyncStorage.setItem("userToken", "abc")
-    .then(data => {
-      dispatch(loading(false));
-      dispatch(saveToken("token saved"));
-    })
-    .catch(err => {
-      dispatch(loading(false));
-      dispatch(error(err.message || "ERROR"));
-    });
-
-export const removeUserToken = () => dispatch =>
-  AsyncStorage.removeItem("userToken")
-    .then(data => {
-      dispatch(loading(false));
-      dispatch(removeToken(data));
-    })
-    .catch(err => {
-      dispatch(loading(false));
-      dispatch(error(err.message || "ERROR"));
-    });
+export const removeAuth = () => dispatch => {
+  dispatch(removeToken());
+  dispatch(saveUserInfo({}));
+};

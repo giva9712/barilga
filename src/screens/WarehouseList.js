@@ -5,6 +5,8 @@ import PTRView from "react-native-pull-to-refresh";
 import { TopNavigation, Spinner } from "@ui-kitten/components";
 import { SafeAreaLayout } from "../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
 import { LayoutList, LayoutListElement } from "../component/ListItem/ListItem";
+import api from "../provider/interceptors";
+import { connect } from "react-redux";
 
 const WarehouseList = props => {
   const { navigation } = props;
@@ -18,30 +20,14 @@ const WarehouseList = props => {
 
   const _fetchData = () => {
     setLoading(true);
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve();
-      }, 300);
-    }).then(() => {
-      setData([
-        {
-          id: 1,
-          title: "Агуулах 1",
-          description: "Шугам, хоолой"
-        },
-        {
-          id: 2,
-          title: "Агуулах 2",
-          description: "Шал"
-        },
-        {
-          id: 3,
-          title: "Агуулах 3",
-          description: "Будаг"
-        }
-      ]);
-      setLoading(false);
-    });
+    api(`/get-warehouses?user_id=${props.user_id}`)
+      .then(res => {
+        setData(res.data.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
   const _gotoWarehouse = item => {
     navigation.navigate("WarehouseItems", {
@@ -53,23 +39,33 @@ const WarehouseList = props => {
   };
 
   return (
-    <SafeAreaLayout insets="top" level="2">
+    <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <PTRView onRefresh={_refresh}>
-        <TopNavigation title="Агуулах" alignment="center" />
-        {loading ? (
-          <View
-            style={{
-              paddingVertical: 30,
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Spinner size="giant" />
-          </View>
-        ) : (
-          <LayoutList data={data} onItemPress={_gotoWarehouse} />
-        )}
+        <View>
+          <TopNavigation title="Агуулах" alignment="center" />
+          {loading ? (
+            <View
+              style={{
+                paddingVertical: 30,
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Spinner size="giant" />
+            </View>
+          ) : (
+            <View>
+              {data.length > 0 ? (
+                <LayoutList data={data} onItemPress={_gotoWarehouse} />
+              ) : (
+                <View>
+                  <Text style={styles.noData}>Мэдээлэл алга</Text>
+                </View>
+              )}
+            </View>
+          )}
+        </View>
       </PTRView>
     </SafeAreaLayout>
   );
@@ -84,9 +80,17 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexDirection: "row",
     alignSelf: "flex-start"
+  },
+  noData: {
+    paddingVertical: 20,
+    textAlign: "center"
   }
 });
 
 WarehouseList.defaultProps = {};
 
-export default WarehouseList;
+const mapStateToProps = state => ({
+  user_id: state.token.userInfo.id
+});
+
+export default connect(mapStateToProps)(WarehouseList);

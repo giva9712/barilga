@@ -35,9 +35,18 @@ export const HomeBottomNavigation = props => {
         selectedIndex={props.navigation.state.index}
         onSelect={onSelect}
       >
-        <BottomNavigationTab title="Агуулах" icon={HomeAssistantIcon} />
-        <BottomNavigationTab title="Түүх" icon={History} />
-        <BottomNavigationTab title="Миний" icon={AccountSettings} />
+        <BottomNavigationTab
+          title={props.navigation.state.index == 0 && "Агуулах"}
+          icon={HomeAssistantIcon}
+        />
+        <BottomNavigationTab
+          title={props.navigation.state.index == 1 && "Түүх"}
+          icon={History}
+        />
+        <BottomNavigationTab
+          title={props.navigation.state.index == 2 && "Миний"}
+          icon={AccountSettings}
+        />
       </BrandBottomNavigation>
     </SafeAreaLayout>
   );

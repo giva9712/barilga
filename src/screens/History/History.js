@@ -12,7 +12,8 @@ import {
   Input,
   Icon,
   List,
-  ListItem
+  ListItem,
+  Divider
 } from "@ui-kitten/components";
 
 import { DatePickerDialog } from "react-native-datepicker-dialog";
@@ -110,11 +111,15 @@ const History = props => {
   );
 
   return (
-    <SafeAreaLayout insets="top" level="2">
+    <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <PTRView onRefresh={_refresh}>
         <TopNavigation title="Түүх" alignment="center" />
-        <TabView selectedIndex={selectedIndex} onSelect={setSelectedIndex}>
-          <Tab title="Орлого">
+        <TabView
+          style={{ flex: 1 }}
+          selectedIndex={selectedIndex}
+          onSelect={setSelectedIndex}
+        >
+          <Tab title="Орлого" style={{ flex: 1 }}>
             <Layout style={styles.tabContainer}>
               <View style={{ flexDirection: "row" }}>
                 <TouchableOpacity
@@ -145,7 +150,13 @@ const History = props => {
                   </View>
                 </TouchableOpacity>
               </View>
-
+              <View
+                style={{
+                  marginTop: 10,
+                  borderBottomColor: "#b7b7b7",
+                  borderBottomWidth: 2
+                }}
+              />
               {loading ? (
                 <View
                   style={{
@@ -157,8 +168,12 @@ const History = props => {
                 >
                   <Spinner size="giant" />
                 </View>
-              ) : (
+              ) : incomeHistoryData.length > 0 ? (
                 <List data={incomeHistoryData} renderItem={renderIncomeList} />
+              ) : (
+                <View>
+                  <Text style={styles.noData}>Мэдээлэл алга</Text>
+                </View>
               )}
             </Layout>
           </Tab>
@@ -192,7 +207,13 @@ const History = props => {
                   </View>
                 </TouchableOpacity>
               </View>
-
+              <View
+                style={{
+                  marginTop: 10,
+                  borderBottomColor: "#b7b7b7",
+                  borderBottomWidth: 2
+                }}
+              />
               {loading ? (
                 <View
                   style={{
@@ -248,6 +269,10 @@ const styles = StyleSheet.create({
     borderWidth: 0,
     color: "#121212",
     alignSelf: "center"
+  },
+  noData: {
+    paddingVertical: 20,
+    textAlign: "center"
   }
 });
 

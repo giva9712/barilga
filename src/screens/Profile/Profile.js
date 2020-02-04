@@ -1,7 +1,7 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { StyleSheet } from "react-native";
 import { connect } from "react-redux";
-import { removeAuthInfo } from "../../store/actions";
+import { removeAuth } from "../../store/actions";
 
 import {
   Button,
@@ -17,28 +17,24 @@ import { ProfileSetting } from "./extra/ProfileSetting";
 const Profile = props => {
   const { navigation } = props;
   const safeArea = useSafeArea();
-  console.log(props.auth);
-
-  const profile = {
-    firstName: "Татах-хүч",
-    lastName: "Соронзон-Болд",
-    photo: require("./assets/profile.jpg"),
-    Gender: "Эрэгтэй",
-    email: "magnet-power@gmail.com",
-    phoneNumber: "+976 9181 1504"
-  };
+  const [profile, setProfile] = useState({
+    id: props.userInfo.id,
+    username: props.userInfo.username,
+    email: props.userInfo.email,
+    phone: props.userInfo.phone,
+    photo: {
+      uri:
+        "https://previews.123rf.com/images/prettyvectors/prettyvectors1309/prettyvectors130900060/22545994-user-profile-avatar-man-icon.jpg"
+    }
+  });
 
   _showMoreApp = () => {
     navigation.navigate("Other");
   };
 
   _signOutAsync = () => {
-    props
-      .removeAuthInfo()
-      .then(() => {
-        navigation.navigate("LoggedOut");
-      })
-      .catch(error => {});
+    props.removeAuth();
+    navigation.navigate("LoggedOut");
   };
 
   return (
@@ -52,13 +48,8 @@ const Profile = props => {
       <ProfileAvatar style={styles.profileAvatar} source={profile.photo} />
       <ProfileSetting
         style={styles.profileSetting}
-        hint="Овог"
-        value={profile.lastName}
-      />
-      <ProfileSetting
-        style={[styles.profileSetting, styles.section]}
-        hint="Нэр"
-        value={profile.firstName}
+        hint="Username"
+        value={profile.username}
       />
 
       <ProfileSetting
@@ -69,7 +60,7 @@ const Profile = props => {
       <ProfileSetting
         style={styles.profileSetting}
         hint="Утас"
-        value={profile.phoneNumber}
+        value={profile.phone}
       />
       <Button style={styles.doneButton} onPress={_signOutAsync}>
         Гарах
@@ -88,7 +79,8 @@ const styles = StyleSheet.create({
   profileAvatar: {
     aspectRatio: 1.0,
     height: 124,
-    alignSelf: "center"
+    alignSelf: "center",
+    marginBottom: 24
   },
   editAvatarButton: {
     aspectRatio: 1.0,
@@ -107,11 +99,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  auth: state.auth.auth
+  userInfo: state.token.userInfo
 });
 
 const mapDispatchToProps = dispatch => ({
-  removeAuthInfo: () => dispatch(removeAuthInfo())
+  removeAuth: () => dispatch(removeAuth())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

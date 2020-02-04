@@ -1,16 +1,16 @@
 import api from "./api";
 
-import store from "../store";
+import { store } from "../store";
 
 import { loading } from "../store/actions";
 
 api.interceptors.request.use(
   config => {
-    const { auth } = store.getState();
-    if (auth) {
-      const token = `Bearer ${auth.token}`;
-      if (token) {
-        config.headers.Authorization = `${token}`;
+    const { token } = store.getState();
+    if (token) {
+      const tokenKey = `${token.token}`;
+      if (tokenKey) {
+        config.headers.authentication = `${tokenKey}`;
       }
     }
     return config;

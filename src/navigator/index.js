@@ -15,7 +15,7 @@ export const getRootNavigator = isLogged =>
         }
       },
       {
-        initialRouteName: "LoggedOut"
+        initialRouteName: isLogged ? "LoggedIn" : "LoggedOut"
       }
     )
   );

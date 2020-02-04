@@ -66,7 +66,7 @@ const ItemDetail = props => {
 
   const color = updating.isIncome ? "#7ED32E" : "#FF3A3A";
   return (
-    <SafeAreaLayout insets="top" level="2">
+    <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <PTRView onRefresh={_refresh}>
         <TopNavigation
           title={navigation.state.params.item.title}

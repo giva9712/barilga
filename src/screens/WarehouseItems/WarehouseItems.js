@@ -157,7 +157,7 @@ const WarehouseItems = props => {
   );
 
   return (
-    <SafeAreaLayout insets="top" level="2">
+    <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <TopNavigation
         title="Барааны жагсаалт"
         alignment="center"
@@ -178,7 +178,7 @@ const WarehouseItems = props => {
 
           {products.length > 0 && (
             <Text style={styles.headerTitle} appearance="hint">
-              {navigation.state.params.item.title}-ын бараанууд
+              {navigation.state.params.item.name}-ын бараанууд
             </Text>
           )}
         </View>
@@ -196,13 +196,16 @@ const WarehouseItems = props => {
         ) : (
           <ScrollView style={styles.container}>
             <View style={{ flex: 1 }}>
-              <List data={products} renderItem={renderProductItem} />
+              {products.length > 0 ? (
+                <List data={products} renderItem={renderProductItem} />
+              ) : (
+                <View>
+                  <Text style={styles.noData}>Мэдээлэл алга</Text>
+                </View>
+              )}
             </View>
           </ScrollView>
         )}
-        {/* <Button style={styles.checkoutButton} size="giant">
-          CHECKOUT
-        </Button> */}
       </PTRView>
     </SafeAreaLayout>
   );
@@ -219,8 +222,8 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   container: {
-    flex: 1,
-    paddingBottom: 70
+    flex: 1
+    // paddingBottom: 70
   },
   base: {
     paddingTop: 15
@@ -230,6 +233,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     flexDirection: "row",
     alignSelf: "flex-start"
+  },
+  noData: {
+    paddingVertical: 20,
+    textAlign: "center"
   }
 });
 
