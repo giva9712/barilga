@@ -3,6 +3,7 @@ import { combineReducers } from "redux";
 const rootReducer = (
   state = {
     token: null,
+    loginInfo: null,
     userInfo: {},
     loading: true,
     error: null
@@ -10,6 +11,8 @@ const rootReducer = (
   action
 ) => {
   switch (action.type) {
+    case "REMEMBER_LOGIN":
+      return { ...state, loginInfo: action.loginInfo };
     case "SAVE_USER_INFO":
       return { ...state, userInfo: action.userInfo };
     case "SAVE_TOKEN":

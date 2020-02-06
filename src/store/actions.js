@@ -1,3 +1,8 @@
+export const rememberLogin = loginInfo => ({
+  type: "REMEMBER_LOGIN",
+  loginInfo
+});
+
 export const saveUserInfo = userInfo => ({
   type: "SAVE_USER_INFO",
   userInfo

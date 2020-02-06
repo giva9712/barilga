@@ -5,9 +5,13 @@ import { ImageOverlay } from "./extra/image-overlay.component";
 import { KeyboardAvoidingView } from "./extra/3rd-party";
 
 import { connect } from "react-redux";
-import { saveToken, saveUserInfo } from "../../store/actions";
+import { rememberLogin, saveToken, saveUserInfo } from "../../store/actions";
 import api from "../../provider/interceptors";
 import Loader from "../../component/Loader/Loader";
+
+import CheckBox from "react-native-check-box";
+
+import { MaterialIcons } from "@expo/vector-icons";
 
 const PersonIcon = style => (
   <Icon {...style} name="ios-person" pack="ionicons" />
@@ -19,53 +23,68 @@ const EyeOffIcon = style => (
 
 const Login = props => {
   const { navigation } = props;
-  const [email, setEmail] = useState("Gdsc@test.com");
-  const [password, setPassword] = useState("1234");
+  const [username, setUsername] = useState(
+    !!props.loginInfo ? props.loginInfo.username : ""
+  );
+  const [password, setPassword] = useState(
+    !!props.loginInfo ? props.loginInfo.password : ""
+  );
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [remember, setRemember] = useState(!!props.loginInfo);
   useEffect(() => {}, []);
 
   const onSignInButtonPress = () => {
     setLoading(true);
     api
       .post("/login", {
-        email,
-        password,
+        username: username,
+        password: password,
         role: 3
       })
       .then(res => {
         setLoading(false);
-        // console.log(res);
-
-        if (res.data.error) {
-          ToastAndroid.showWithGravityAndOffset(
-            res.data.error,
-            ToastAndroid.LONG,
-            ToastAndroid.CENTER,
-            25,
-            50
-          );
-        }
         if (res.data.token) {
           let { token, ...userInfo } = res.data;
+          if (remember && !props.loginInfo) {
+            props.rememberLogin({
+              username,
+              password
+            });
+          } else if (!remember) {
+            props.rememberLogin(null);
+          }
           props.saveToken(token);
           props.saveUserInfo(userInfo);
           navigation.navigate("LoggedIn");
         }
       })
       .catch(err => {
-        console.log(err);
+        ToastAndroid.showWithGravityAndOffset(
+          err.response.data.error,
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+          25,
+          50
+        );
         setLoading(false);
       });
+  };
+
+  const onCheckedChange = () => {
+    setRemember(!remember);
   };
 
   const onPasswordIconPress = () => {
     setPasswordVisible(!passwordVisible);
   };
+  const onRequestClose = () => {
+    setLoading(false);
+  };
 
   return (
     <KeyboardAvoidingView>
-      <Loader loading={loading} />
+      <Loader loading={loading} onRequestClose={onRequestClose} />
       <ImageOverlay
         style={styles.container}
         source={require("../../../assets/images/bg.jpg")}
@@ -83,9 +102,9 @@ const Login = props => {
         <View style={styles.formContainer}>
           <Input
             status="control"
-            placeholder="Имэйл"
-            value={email}
-            onChangeText={setEmail}
+            placeholder="Нэвтрэх"
+            value={username}
+            onChangeText={setUsername}
             icon={PersonIcon}
           />
           <Input
@@ -98,7 +117,30 @@ const Login = props => {
             onIconPress={onPasswordIconPress}
             icon={EyeOffIcon}
           />
+          <View
+            style={{ justifyContent: "center", flex: 1, flexDirection: "row" }}
+          >
+            <CheckBox
+              style={{ padding: 10, width: 150 }}
+              checkBoxColor="#fff"
+              leftTextStyle={{ color: "#fff" }}
+              checkedImage={
+                <MaterialIcons color="#fff" size={40} name="check-box" />
+              }
+              unCheckedImage={
+                <MaterialIcons
+                  color="#fff"
+                  size={40}
+                  name="check-box-outline-blank"
+                />
+              }
+              onClick={onCheckedChange}
+              isChecked={remember}
+              leftText={"Сануулах"}
+            />
+          </View>
         </View>
+
         <Button
           style={styles.signInButton}
           size="giant"
@@ -138,12 +180,15 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => state;
+const mapStateToProps = state => ({
+  loginInfo: state.token.loginInfo
+});
 
 const mapDispatchToProps = dispatch => ({
+  rememberLogin: loginInfo => dispatch(rememberLogin(loginInfo)),
   saveToken: token => dispatch(saveToken(token)),
   saveUserInfo: userInfo => dispatch(saveUserInfo(userInfo))
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 // export default Login;
