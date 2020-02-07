@@ -12,60 +12,11 @@ import {
   Icon,
   Input
 } from "@ui-kitten/components";
-import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
 import { Item } from "./extra/Item";
+import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
+import api from "../../provider/interceptors";
 
 import _ from "lodash";
-
-const datas = {
-  1: [
-    {
-      id: 1,
-      title: "Тоосго",
-      subtitle: "Материал",
-      image: {
-        uri: "https://www.sabatradebd.com/wp-content/uploads/2015/12/81.jpg"
-      },
-      price: 123,
-      amount: 5300
-    },
-    {
-      id: 2,
-      title: "Төмөр",
-      subtitle: "Материал",
-      image: {
-        uri:
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRr_JK2aov6C_ZaTV_mOerk_Dl0fm92Hhkgf42M-jc7lmXGD1Ok&s"
-      },
-      price: 123,
-      amount: 1500
-    },
-    {
-      id: 3,
-      title: "Hooloi",
-      subtitle: "Шугам, хоолой",
-      image: {
-        uri:
-          "https://www.borghesegardens.com/wp-content/uploads/2019/01/plumbing-pipes.png"
-      },
-      price: 123,
-      amount: 1120
-    },
-    {
-      id: 4,
-      title: "Hollow Polycarbonate",
-      subtitle: "Материал",
-      image: {
-        uri:
-          "https://image.made-in-china.com/202f0j00fKJtMbQaqRYc/High-Light-Building-Materials-Hollow-Polycarbonate-PC-Roofing-Sheet.jpg"
-      },
-      price: 123,
-      amount: 800
-    }
-  ],
-  2: [],
-  3: []
-};
 
 const IOSArrowBack = style => (
   <Icon {...style} name="ios-arrow-back" pack="ionicons" />
@@ -95,14 +46,16 @@ const WarehouseItems = props => {
 
   const _fetchData = () => {
     setLoading(true);
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve();
-      }, 300);
-    }).then(() => {
-      setLoading(false);
-      setProducts(datas[navigation.state.params.item.id]);
-    });
+    api
+      .get(`/get-items?warehouse_id=${navigation.state.params.item.id}`)
+      .then(res => {
+        setProducts(res.data.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   const _refresh = () => {
@@ -143,12 +96,12 @@ const WarehouseItems = props => {
   useEffect(() => {
     if (searchQuery && searchQuery != "") {
       setProducts(
-        _.filter(datas[navigation.state.params.item.id], function(el) {
+        _.filter(products, function(el) {
           return el.title.toLowerCase().includes(searchQuery.toLowerCase());
         })
       );
     } else {
-      setProducts(datas[navigation.state.params.item.id]);
+      setProducts(products);
     }
   }, [searchQuery]);
 

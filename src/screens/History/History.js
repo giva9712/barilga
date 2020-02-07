@@ -243,7 +243,8 @@ const History = props => {
 
 const styles = StyleSheet.create({
   tabContainer: {
-    minHeight: 150
+    minHeight: 150,
+    flex: 1
   },
   input: {
     flex: 1,

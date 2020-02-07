@@ -49,11 +49,11 @@ export const Item = props => {
 
   return (
     <ListItem {...listItemProps} style={[styles.container, style]}>
-      <Image style={styles.image} source={product.image} />
+      <Image style={styles.image} source={{ uri: product.img_paths }} />
       <View style={styles.detailsContainer}>
-        <Text category="s1">{product.title}</Text>
+        <Text category="s1">{product.name}</Text>
         <Text appearance="hint" category="p2">
-          {product.subtitle}
+          {product.category_name}
         </Text>
         {/* <Text category="s2">{product.formattedPrice}</Text> */}
         <View style={styles.amountContainer}>
@@ -65,7 +65,7 @@ export const Item = props => {
             disabled={!decrementButtonEnabled()}
           /> */}
           <Text style={styles.amount} category="s2">
-            Тоо ширхэг: {`${product.amount}`}
+            Тоо ширхэг: {`${product.minimum_balance}`}
           </Text>
           {/* <Button
             style={[styles.iconButton, styles.amountButton]}

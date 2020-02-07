@@ -3,6 +3,7 @@ import api from "./api";
 import { store } from "../store";
 import { saveToken } from "../store/actions";
 import { goToLogin } from "../helper/actions";
+import { ToastAndroid } from "react-native";
 
 const { dispatch } = store;
 
@@ -33,6 +34,13 @@ api.interceptors.response.use(
       (error.response.status === 401 || error.response.status === 403)
     ) {
       goToLogin();
+      ToastAndroid.showWithGravityAndOffset(
+        error.response.data.error,
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER,
+        25,
+        50
+      );
     } else if (error.response && error.response.status === 400) {
       return Promise.reject(error);
     }
