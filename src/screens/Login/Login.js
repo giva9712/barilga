@@ -46,12 +46,12 @@ const Login = props => {
         setLoading(false);
         if (res.data.token) {
           let { token, ...userInfo } = res.data;
-          if (remember && !props.loginInfo) {
+          if (remember) {
             props.rememberLogin({
               username,
               password
             });
-          } else if (!remember) {
+          } else {
             props.rememberLogin(null);
           }
           props.saveToken(token);

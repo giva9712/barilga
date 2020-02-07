@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from "react-native";
 
 import { getRootNavigator } from "./navigator";
 import { store } from "./store";
+import NavigationService from "./navigator/NavigationService";
 
 // import { getUserToken } from "./store/actions";
 
@@ -18,7 +19,11 @@ const Main = props => {
 
   return (
     <View style={styles.container}>
-      <RootNavigator />
+      <RootNavigator
+        ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}
+      />
     </View>
   );
 };
