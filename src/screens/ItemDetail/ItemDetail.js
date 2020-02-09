@@ -18,12 +18,18 @@ import ToggleSwitch from "toggle-switch-react-native";
 
 import NumericInput from "react-native-numeric-input";
 
+import api from "../../provider/interceptors";
+
+import { store } from "../../store";
+
 const IOSArrowBack = style => (
   <Icon {...style} name="ios-arrow-back" pack="ionicons" />
 );
 
 const ItemDetail = props => {
   const { navigation } = props;
+
+  const created_by = store.getState().token.userInfo.username;
 
   const renderBackAction = () => (
     <TopNavigationAction
@@ -45,8 +51,24 @@ const ItemDetail = props => {
   }, []);
 
   _saveUpdates = () => {
-    ToastAndroid.show("Successfully saved!", ToastAndroid.SHORT);
-    navigation.goBack();
+    api
+      .post("/save-item-tran", {
+        item_id: itemDetail.id,
+        warehouse_id: itemDetail.warehouse_id,
+        in_count: updating.isIncome ? updating.value : 0,
+        out_count: !updating.isIncome ? updating.value : 0,
+        is_income: updating.isIncome,
+        description: "test",
+        created_by: created_by
+      })
+      .then(res => {
+        ToastAndroid.show("Successfully saved!", ToastAndroid.SHORT);
+        navigation.goBack();
+      })
+      .catch(err => {
+        console.log(err.response.data.error);
+        ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
+      });
   };
 
   const _refresh = () => {
@@ -69,7 +91,7 @@ const ItemDetail = props => {
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <PTRView onRefresh={_refresh}>
         <TopNavigation
-          title={navigation.state.params.item.title}
+          title={navigation.state.params.item.name}
           alignment="center"
           leftControl={renderBackAction()}
         />
@@ -94,7 +116,7 @@ const ItemDetail = props => {
               }}
             >
               <Image
-                source={itemDetail.image}
+                source={{ uri: itemDetail.base64img }}
                 style={{ height: 260, width: 260, flex: 1 }}
               />
             </View>

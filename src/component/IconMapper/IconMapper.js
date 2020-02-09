@@ -24,7 +24,7 @@ const IconProvider = name => ({
   toReactElement: props => MaterialIcon({ name, ...props })
 });
 
-function MaterialIcon({ name, style }) {
+function MaterialIcon({ name, style, onPress }) {
   const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
   return (
     <MaterialCommunityIconsParent
@@ -32,6 +32,7 @@ function MaterialIcon({ name, style }) {
       size={height}
       color={tintColor}
       style={iconStyle}
+      onPress={onPress}
     />
   );
 }
@@ -56,7 +57,7 @@ const IoniconsIconProvider = name => ({
   toReactElement: props => IoniconsIcons({ name, ...props })
 });
 
-function IoniconsIcons({ name, style }) {
+function IoniconsIcons({ name, style, onPress }) {
   const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
   return (
     <IoniconsParent
@@ -64,6 +65,7 @@ function IoniconsIcons({ name, style }) {
       size={height}
       color={tintColor}
       style={iconStyle}
+      onPress={onPress}
     />
   );
 }
@@ -88,7 +90,7 @@ const FeatherIconsIconProvider = name => ({
   toReactElement: props => FeatherIconsIcons({ name, ...props })
 });
 
-function FeatherIconsIcons({ name, style }) {
+function FeatherIconsIcons({ name, style, onPress }) {
   const { height, tintColor, ...iconStyle } = StyleSheet.flatten(style);
   return (
     <FeatherIconsParent
@@ -96,6 +98,7 @@ function FeatherIconsIcons({ name, style }) {
       size={height}
       color={tintColor}
       style={iconStyle}
+      onPress={onPress}
     />
   );
 }

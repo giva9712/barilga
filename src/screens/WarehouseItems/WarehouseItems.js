@@ -27,6 +27,8 @@ const SearchIcon = style => <Icon {...style} name="search" pack="feather" />;
 const WarehouseItems = props => {
   const { navigation } = props;
 
+  const warehouse_id = navigation.state.params.item.id;
+
   const renderBackAction = () => (
     <TopNavigationAction
       icon={IOSArrowBack}
@@ -36,20 +38,43 @@ const WarehouseItems = props => {
 
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState();
+
+  const InputIcon = style => (
+    <Icon
+      {...style}
+      onPress={onIconPress}
+      name={!!searchQuery ? "md-close-circle" : "search"}
+      pack={!!searchQuery ? "ionicons" : "feather"}
+    />
+  );
 
   useEffect(() => {
     _isMounted = true;
     _fetchData();
   }, []);
 
+  const getAndLoadImage = async BASE64_URI => {
+    const response = await api.get(BASE64_URI);
+    return response.data;
+  };
+
   const _fetchData = () => {
     setLoading(true);
     api
-      .get(`/get-items?warehouse_id=${navigation.state.params.item.id}`)
-      .then(res => {
-        setProducts(res.data.data);
+      .get(`/get-items?warehouse_id=${warehouse_id}`)
+      .then(async res => {
+        let tempVar = [...res.data.data];
+        for (let index = 0; index < tempVar.length; index++) {
+          tempVar[index]["base64img"] = await getAndLoadImage(
+            tempVar[index].img_path[0]
+          );
+          tempVar[index]["warehouse_id"] = warehouse_id;
+        }
+        setFilteredProducts(tempVar);
+        setProducts(tempVar);
         setLoading(false);
       })
       .catch(err => {
@@ -69,23 +94,12 @@ const WarehouseItems = props => {
     });
   };
 
-  const onItemRemove = (product, index) => {
-    products.splice(index, 1);
-    setProducts([...products]);
-  };
-
-  const onItemChange = (product, index) => {
-    products[index] = product;
-    setProducts([...products]);
-  };
   const renderProductItem = info => (
     <Item
       style={styles.item}
       index={info.index}
       product={info.item}
       onPress={() => onItemActionPress(info)}
-      onProductChange={onItemChange}
-      onRemove={onItemRemove}
     />
   );
 
@@ -93,15 +107,19 @@ const WarehouseItems = props => {
     setShowSearch(!showSearch);
   };
 
+  const onIconPress = () => {
+    setSearchQuery("");
+  };
+
   useEffect(() => {
     if (searchQuery && searchQuery != "") {
-      setProducts(
+      setFilteredProducts(
         _.filter(products, function(el) {
-          return el.title.toLowerCase().includes(searchQuery.toLowerCase());
+          return el.name.toLowerCase().includes(searchQuery.toLowerCase());
         })
       );
     } else {
-      setProducts(products);
+      setFilteredProducts(products);
     }
   }, [searchQuery]);
 
@@ -125,7 +143,8 @@ const WarehouseItems = props => {
               placeholder="Хайх"
               onChangeText={text => setSearchQuery(text)}
               value={searchQuery}
-              icon={SearchIcon}
+              icon={InputIcon}
+              onIconPress={onIconPress}
             />
           )}
 
@@ -149,8 +168,8 @@ const WarehouseItems = props => {
         ) : (
           <ScrollView style={styles.container}>
             <View style={{ flex: 1 }}>
-              {products.length > 0 ? (
-                <List data={products} renderItem={renderProductItem} />
+              {filteredProducts.length > 0 ? (
+                <List data={filteredProducts} renderItem={renderProductItem} />
               ) : (
                 <View>
                   <Text style={styles.noData}>Мэдээлэл алга</Text>

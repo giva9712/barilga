@@ -21,8 +21,14 @@ import { DatePickerDialog } from "react-native-datepicker-dialog";
 import moment from "moment";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
+import api from "../../provider/interceptors";
+import { store } from "../../store";
+import _ from "lodash";
+
 const History = props => {
   const { navigation } = props;
+
+  const created_by = store.getState().token.userInfo.username;
 
   const [loading, setLoading] = useState(false);
 
@@ -39,30 +45,41 @@ const History = props => {
 
   const _fetchData = () => {
     setLoading(true);
-    new Promise(resolve => {
-      setTimeout(() => {
-        resolve();
-      }, 300);
-    }).then(() => {
-      setLoading(false);
-      if (selectedIndex == 0) {
-        setIncomeHistoryData([
-          {
-            item_name: "Тоосго",
-            warehouse_name: "Агуулах 1",
-            amount: 159
-          }
-        ]);
-      } else {
-        setExpenseHistoryData([
-          {
-            item_name: "Тоосго",
-            warehouse_name: "Агуулах 1",
-            amount: 88
-          }
-        ]);
-      }
-    });
+    api
+      .get("/get-item-trans", {
+        params: {
+          begin_date: moment(startDate).format("YYYY-MM-DD"),
+          end_date: moment(endDate).format("YYYY-MM-DD"),
+          created_by: created_by,
+          warehouse_id: null
+        }
+      })
+      .then(res => {
+        console.log(res);
+        setLoading(false);
+        if (selectedIndex == 0) {
+          setIncomeHistoryData(
+            _.orderBy(
+              _.filter(res.data.data, { is_income: 1 }),
+              "created_date",
+              "desc"
+            )
+          );
+        } else {
+          console.log(_.filter(res.data.data, { is_income: 0 }));
+          setExpenseHistoryData(
+            _.orderBy(
+              _.filter(res.data.data, { is_income: 0 }),
+              "created_date",
+              "desc"
+            )
+          );
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
   };
 
   const _refresh = () => {
@@ -85,12 +102,12 @@ const History = props => {
 
   useEffect(() => {
     _fetchData();
-  }, [selectedIndex]);
+  }, [selectedIndex, startDate, endDate]);
 
   const renderItemAccessory = (style, item, isIncome) => (
     <Text style={{ ...style, color: isIncome ? "green" : "red" }}>
       {isIncome ? "+" : "-"}
-      {item.amount}
+      {isIncome ? item.in_count : item.out_count}
     </Text>
   );
 
@@ -225,11 +242,15 @@ const History = props => {
                 >
                   <Spinner size="giant" />
                 </View>
-              ) : (
+              ) : expenseHistoryData.length > 0 ? (
                 <List
                   data={expenseHistoryData}
                   renderItem={renderExpenseList}
                 />
+              ) : (
+                <View>
+                  <Text style={styles.noData}>Мэдээлэл алга</Text>
+                </View>
               )}
             </Layout>
           </Tab>

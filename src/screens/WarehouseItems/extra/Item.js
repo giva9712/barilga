@@ -1,60 +1,43 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, ListItem, ListItemProps, Text } from "@ui-kitten/components";
-import { Entypo } from "@expo/vector-icons";
+import axios from "axios";
+
+const ImageLoader = props => {
+  const { style, source } = props;
+  const [parsedData, setParsedData] = useState(source.uri);
+  useEffect(() => {
+    const getData = async URL => {
+      const response = await axios.get(URL);
+      setParsedData(response.data);
+    };
+    getData(parsedData);
+  }, []);
+  return <Image style={style} source={{ uri: parsedData }} />;
+};
 
 export const Item = props => {
-  const {
-    style,
-    product,
-    index,
-    onProductChange,
-    onRemove,
-    ...listItemProps
-  } = props;
-
-  const decrementButtonEnabled = () => {
-    return product.amount > 1;
-  };
-
-  const onRemoveButtonPress = () => {
-    onRemove(product, index);
-  };
-
-  const onMinusButtonPress = () => {
-    const updatedProduct = new Product(
-      product.id,
-      product.title,
-      product.subtitle,
-      product.image,
-      product.price,
-      product.amount - 1
-    );
-
-    onProductChange(updatedProduct, index);
-  };
-
-  const onPlusButtonPress = () => {
-    const updatedProduct = new Product(
-      product.id,
-      product.title,
-      product.subtitle,
-      product.image,
-      product.price,
-      product.amount + 1
-    );
-
-    onProductChange(updatedProduct, index);
-  };
+  const { style, product, index, ...listItemProps } = props;
 
   return (
     <ListItem {...listItemProps} style={[styles.container, style]}>
-      <Image style={styles.image} source={{ uri: product.img_paths }} />
+      {/* <ImageLoader style={styles.image} source={{ uri: product.img_path[0] }} /> */}
+      <Image style={styles.image} source={{ uri: product.base64img }} />
       <View style={styles.detailsContainer}>
         <Text category="s1">{product.name}</Text>
-        <Text appearance="hint" category="p2">
-          {product.category_name}
-        </Text>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              marginVertical: 15,
+              flexShrink: 1
+            }}
+            appearance="hint"
+            category="p2"
+          >
+            {product.category_name}
+          </Text>
+        </View>
+
         {/* <Text category="s2">{product.formattedPrice}</Text> */}
         <View style={styles.amountContainer}>
           {/* <Button
@@ -91,7 +74,8 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     height: "100%",
-    padding: 16
+    padding: 16,
+    flex: 8
   },
   amountContainer: {
     flexDirection: "row"
