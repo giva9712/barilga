@@ -22,6 +22,10 @@ import api from "../../provider/interceptors";
 
 import { store } from "../../store";
 
+import ImageLoader from "../../component/ImageLoader/ImageLoader";
+
+const noAvailableImage = require("../../../assets/images/No_picture_available.png");
+
 const IOSArrowBack = style => (
   <Icon {...style} name="ios-arrow-back" pack="ionicons" />
 );
@@ -115,9 +119,17 @@ const ItemDetail = props => {
                 alignItems: "center"
               }}
             >
-              <Image
-                source={{ uri: itemDetail.base64img }}
-                style={{ height: 260, width: 260, flex: 1 }}
+              <ImageLoader
+                imageStyle={{
+                  height: 260,
+                  width: 260,
+                  justifyContent: "center"
+                }}
+                source={
+                  itemDetail.img_path.length > 0
+                    ? { uri: itemDetail.img_path[0] }
+                    : noAvailableImage
+                }
               />
             </View>
             <View

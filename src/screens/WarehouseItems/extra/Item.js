@@ -1,28 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Image, StyleSheet, View } from "react-native";
-import { Button, ListItem, ListItemProps, Text } from "@ui-kitten/components";
-import axios from "axios";
+import React from "react";
+import { StyleSheet, View } from "react-native";
+import { ListItem, Text } from "@ui-kitten/components";
+import ImageLoader from "../../../component/ImageLoader/ImageLoader";
 
-const ImageLoader = props => {
-  const { style, source } = props;
-  const [parsedData, setParsedData] = useState(source.uri);
-  useEffect(() => {
-    const getData = async URL => {
-      const response = await axios.get(URL);
-      setParsedData(response.data);
-    };
-    getData(parsedData);
-  }, []);
-  return <Image style={style} source={{ uri: parsedData }} />;
-};
+const noAvailableImage = require("../../../../assets/images/No_picture_available.png");
 
 export const Item = props => {
   const { style, product, index, ...listItemProps } = props;
 
   return (
     <ListItem {...listItemProps} style={[styles.container, style]}>
-      {/* <ImageLoader style={styles.image} source={{ uri: product.img_path[0] }} /> */}
-      <Image style={styles.image} source={{ uri: product.base64img }} />
+      <ImageLoader
+        imageStyle={styles.image}
+        source={
+          product.img_path.length > 0
+            ? { uri: product.img_path[0] }
+            : noAvailableImage
+        }
+      />
+      {/* <Image style={styles.image} source={{ uri: product.base64img }} /> */}
       <View style={styles.detailsContainer}>
         <Text category="s1">{product.name}</Text>
         <View style={{ flex: 1 }}>
@@ -70,7 +66,9 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 120,
-    height: 144
+    height: 144,
+    flex: 1,
+    justifyContent: "center"
   },
   detailsContainer: {
     height: "100%",
