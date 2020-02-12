@@ -1,7 +1,7 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { ListItem, Text } from "@ui-kitten/components";
-import ImageLoader from "../../../component/ImageLoader/ImageLoader";
+// import ImageLoader from "../../../component/ImageLoader/ImageLoader";
 
 const noAvailableImage = require("../../../../assets/images/No_picture_available.png");
 
@@ -10,15 +10,12 @@ export const Item = props => {
 
   return (
     <ListItem {...listItemProps} style={[styles.container, style]}>
-      <ImageLoader
-        imageStyle={styles.image}
+      <Image
+        style={styles.image}
         source={
-          product.img_path.length > 0
-            ? { uri: product.img_path[0] }
-            : noAvailableImage
+          !!product.img_path ? { uri: product.img_path } : noAvailableImage
         }
       />
-      {/* <Image style={styles.image} source={{ uri: product.base64img }} /> */}
       <View style={styles.detailsContainer}>
         <Text category="s1">{product.name}</Text>
         <View style={{ flex: 1 }}>
@@ -67,7 +64,7 @@ const styles = StyleSheet.create({
   image: {
     width: 120,
     height: 144,
-    flex: 1,
+
     justifyContent: "center"
   },
   detailsContainer: {

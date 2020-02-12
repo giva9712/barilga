@@ -67,14 +67,10 @@ const WarehouseItems = props => {
       .get(`/get-items?warehouse_id=${warehouse_id}`)
       .then(res => {
         let tempVar = [...res.data.data];
-        // console.log(tempVar);
-        // for (let index = 0; index < tempVar.length; index++) {
-        //   if (tempVar[index].img_path.length > 0)
-        //     tempVar[index]["base64img"] = await getAndLoadImage(
-        //       tempVar[index].img_path[0]
-        //     );
-        // tempVar[index]["warehouse_id"] = warehouse_id;
-        // }
+        for (let index = 0; index < tempVar.length; index++) {
+          tempVar[index]["warehouse_id"] = warehouse_id;
+        }
+        console.log(tempVar);
         setFilteredProducts(tempVar);
         setProducts(tempVar);
         setLoading(false);

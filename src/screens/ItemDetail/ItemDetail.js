@@ -70,7 +70,9 @@ const ItemDetail = props => {
         navigation.goBack();
       })
       .catch(err => {
+        console.log(err.response);
         console.log(err.response.data.error);
+
         ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
       });
   };
@@ -119,7 +121,7 @@ const ItemDetail = props => {
                 alignItems: "center"
               }}
             >
-              <ImageLoader
+              {/* <ImageLoader
                 imageStyle={{
                   height: 260,
                   width: 260,
@@ -128,6 +130,18 @@ const ItemDetail = props => {
                 source={
                   itemDetail.img_path.length > 0
                     ? { uri: itemDetail.img_path[0] }
+                    : noAvailableImage
+                }
+              /> */}
+              <Image
+                style={{
+                  height: 260,
+                  width: 260,
+                  justifyContent: "center"
+                }}
+                source={
+                  !!itemDetail.img_path
+                    ? { uri: itemDetail.img_path }
                     : noAvailableImage
                 }
               />
