@@ -53,6 +53,25 @@ const WarehouseItems = props => {
 
   useEffect(() => {
     _isMounted = true;
+    const _fetchData = () => {
+      setLoading(true);
+      api
+        .get(`/get-items?warehouse_id=${warehouse_id}`)
+        .then(res => {
+          let tempVar = [...res.data.data];
+          for (let index = 0; index < tempVar.length; index++) {
+            tempVar[index]["warehouse_id"] = warehouse_id;
+          }
+          console.log(tempVar);
+          setFilteredProducts(tempVar);
+          setProducts(tempVar);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.log(err);
+          setLoading(false);
+        });
+    };
     _fetchData();
   }, []);
 
@@ -61,34 +80,17 @@ const WarehouseItems = props => {
     return response.data;
   };
 
-  const _fetchData = () => {
-    setLoading(true);
-    api
-      .get(`/get-items?warehouse_id=${warehouse_id}`)
-      .then(res => {
-        let tempVar = [...res.data.data];
-        for (let index = 0; index < tempVar.length; index++) {
-          tempVar[index]["warehouse_id"] = warehouse_id;
-        }
-        console.log(tempVar);
-        setFilteredProducts(tempVar);
-        setProducts(tempVar);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.log(err);
-        setLoading(false);
-      });
-  };
-
   const _refresh = () => {
     _fetchData();
   };
 
   const onItemActionPress = item => {
-    // console.log(item);
+    console.log("######", item);
+    console.log({
+      item: { ...item, description: "", id: null, item_id: item.id }
+    });
     navigation.navigate("ItemDetail", {
-      ...item
+      item: { ...item, description: "", id: null, item_id: item.id }
     });
   };
 
@@ -97,7 +99,7 @@ const WarehouseItems = props => {
       style={styles.item}
       index={info.index}
       product={info.item}
-      onPress={() => onItemActionPress(info)}
+      onPress={() => onItemActionPress(info.item)}
     />
   );
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 import PTRView from "react-native-pull-to-refresh";
 import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
 import {
@@ -7,13 +7,15 @@ import {
   Spinner,
   Layout,
   Tab,
+  TabBar,
   TabView,
   Text,
   Input,
   Icon,
   List,
   ListItem,
-  Divider
+  Divider,
+  Card
 } from "@ui-kitten/components";
 
 import { DatePickerDialog } from "react-native-datepicker-dialog";
@@ -104,7 +106,7 @@ const History = props => {
     _fetchData();
   }, [selectedIndex, startDate, endDate]);
 
-  const renderItemAccessory = (style, item, isIncome) => (
+  const RenderItemAccessory = ({ style, item, isIncome }) => (
     <Text style={{ ...style, color: isIncome ? "green" : "red" }}>
       {isIncome ? "+" : "-"}
       {isIncome ? item.in_count : item.out_count}
@@ -112,149 +114,167 @@ const History = props => {
   );
 
   const renderIncomeList = ({ item, index }) => (
-    <ListItem
-      title={`${item.item_name}`}
-      description={`${item.warehouse_name}`}
-      accessory={style => renderItemAccessory(style, item, true)}
-    />
+    // <ListItem
+    //   title={`${item.item_name}`}
+    //   description={`${item.warehouse_name}`}
+    //   accessory={style => renderItemAccessory(style, item, true)}
+    // />
+
+    <Card style={styles.itemContainer} onPress={() => gotoHistory(item)}>
+      <Text category="s1">{item.item_name}</Text>
+      <Text style={styles.itemDescription} appearance="hint">
+        {item.warehouse_name}
+      </Text>
+      <Text
+        style={{ ...styles.itemDescription, marginTop: 20 }}
+        appearance="hint"
+      >
+        {item.description}
+      </Text>
+      <RenderItemAccessory
+        style={{
+          position: "absolute",
+          right: 30,
+          top: 33,
+          fontSize: 20,
+          zIndex: 1
+        }}
+        item={item}
+        isIncome={true}
+      />
+    </Card>
   );
 
+  const gotoHistory = item => {
+    console.log(item);
+    navigation.navigate("ItemDetail", {
+      item: { ...item, id: 1, name: item.item_name }
+    });
+  };
+
   const renderExpenseList = ({ item, index }) => (
-    <ListItem
-      title={`${item.item_name}`}
-      description={`${item.warehouse_name}`}
-      accessory={style => renderItemAccessory(style, item)}
-    />
+    // <ListItem
+    //   title={`${item.item_name}`}
+    //   description={`${item.warehouse_name}`}
+    //   accessory={style => renderItemAccessory(style, item)}
+    // />
+
+    <Card style={styles.itemContainer} onPress={() => gotoHistory(item)}>
+      <Text category="s1">{item.item_name}</Text>
+      <Text style={styles.itemDescription} appearance="hint">
+        {item.warehouse_name}
+      </Text>
+      <Text
+        style={{ ...styles.itemDescription, marginTop: 20 }}
+        appearance="hint"
+      >
+        {item.description}
+      </Text>
+      <RenderItemAccessory
+        style={{
+          position: "absolute",
+          right: 30,
+          top: 33,
+          fontSize: 20,
+          zIndex: 1
+        }}
+        item={item}
+        isIncome={false}
+      />
+    </Card>
   );
+
+  const renderSelectedTab = () => {
+    console.log(selectedIndex);
+    switch (selectedIndex) {
+      case 0:
+        return (
+          <Layout style={styles.tabContainer}>
+            {loading ? (
+              <View
+                style={{
+                  paddingVertical: 30,
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <Spinner size="giant" />
+              </View>
+            ) : incomeHistoryData.length > 0 ? (
+              <List data={incomeHistoryData} renderItem={renderIncomeList} />
+            ) : (
+              <View>
+                <Text style={styles.noData}>Мэдээлэл алга</Text>
+              </View>
+            )}
+          </Layout>
+        );
+      case 1:
+        return (
+          <Layout style={styles.tabContainer}>
+            {loading ? (
+              <View
+                style={{
+                  paddingVertical: 30,
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                <Spinner size="giant" />
+              </View>
+            ) : expenseHistoryData.length > 0 ? (
+              <List data={expenseHistoryData} renderItem={renderExpenseList} />
+            ) : (
+              <View>
+                <Text style={styles.noData}>Мэдээлэл алга</Text>
+              </View>
+            )}
+          </Layout>
+        );
+    }
+  };
 
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
-      <PTRView onRefresh={_refresh}>
-        <TopNavigation title="Түүх" alignment="center" />
-        <TabView
-          style={{ flex: 1 }}
-          selectedIndex={selectedIndex}
-          onSelect={setSelectedIndex}
-        >
-          <Tab title="Орлого" style={{ flex: 1 }}>
-            <Layout style={styles.tabContainer}>
-              <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity
-                  style={styles.input}
-                  onPress={showStartDateDialog}
-                >
-                  <View style={styles.datePickerBox}>
-                    <View style={{ padding: 8, width: 35 }}>
-                      <MaterialCommunityIcons name="calendar-blank" size={22} />
-                    </View>
-                    <Text style={styles.datePickerText}>
-                      {moment(startDate).format("YYYY-MM-DD")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+      <TopNavigation title="Түүх" alignment="center" />
+      <TabBar selectedIndex={selectedIndex} onSelect={setSelectedIndex}>
+        <Tab title="Орлого" />
+        <Tab title="Зарлага" />
+      </TabBar>
+      <View style={{ flexDirection: "row" }}>
+        <TouchableOpacity style={styles.input} onPress={showStartDateDialog}>
+          <View style={styles.datePickerBox}>
+            <View style={{ padding: 8, width: 35 }}>
+              <MaterialCommunityIcons name="calendar-blank" size={22} />
+            </View>
+            <Text style={styles.datePickerText}>
+              {moment(startDate).format("YYYY-MM-DD")}
+            </Text>
+          </View>
+        </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={styles.input}
-                  onPress={showEndDateDialog}
-                >
-                  <View style={styles.datePickerBox}>
-                    <View style={{ padding: 8, width: 35 }}>
-                      <MaterialCommunityIcons name="calendar-blank" size={22} />
-                    </View>
-                    <Text style={styles.datePickerText}>
-                      {moment(endDate).format("YYYY-MM-DD")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  marginTop: 10,
-                  borderBottomColor: "#b7b7b7",
-                  borderBottomWidth: 2
-                }}
-              />
-              {loading ? (
-                <View
-                  style={{
-                    paddingVertical: 30,
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <Spinner size="giant" />
-                </View>
-              ) : incomeHistoryData.length > 0 ? (
-                <List data={incomeHistoryData} renderItem={renderIncomeList} />
-              ) : (
-                <View>
-                  <Text style={styles.noData}>Мэдээлэл алга</Text>
-                </View>
-              )}
-            </Layout>
-          </Tab>
-          <Tab title="Зарлага">
-            <Layout style={styles.tabContainer}>
-              <View style={{ flexDirection: "row" }}>
-                <TouchableOpacity
-                  style={styles.input}
-                  onPress={showStartDateDialog}
-                >
-                  <View style={styles.datePickerBox}>
-                    <View style={{ padding: 8, width: 35 }}>
-                      <MaterialCommunityIcons name="calendar-blank" size={22} />
-                    </View>
-                    <Text style={styles.datePickerText}>
-                      {moment(startDate).format("YYYY-MM-DD")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.input}
-                  onPress={showEndDateDialog}
-                >
-                  <View style={styles.datePickerBox}>
-                    <View style={{ padding: 8, width: 35 }}>
-                      <MaterialCommunityIcons name="calendar-blank" size={22} />
-                    </View>
-                    <Text style={styles.datePickerText}>
-                      {moment(endDate).format("YYYY-MM-DD")}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  marginTop: 10,
-                  borderBottomColor: "#b7b7b7",
-                  borderBottomWidth: 2
-                }}
-              />
-              {loading ? (
-                <View
-                  style={{
-                    paddingVertical: 30,
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                >
-                  <Spinner size="giant" />
-                </View>
-              ) : expenseHistoryData.length > 0 ? (
-                <List
-                  data={expenseHistoryData}
-                  renderItem={renderExpenseList}
-                />
-              ) : (
-                <View>
-                  <Text style={styles.noData}>Мэдээлэл алга</Text>
-                </View>
-              )}
-            </Layout>
-          </Tab>
-        </TabView>
+        <TouchableOpacity style={styles.input} onPress={showEndDateDialog}>
+          <View style={styles.datePickerBox}>
+            <View style={{ padding: 8, width: 35 }}>
+              <MaterialCommunityIcons name="calendar-blank" size={22} />
+            </View>
+            <Text style={styles.datePickerText}>
+              {moment(endDate).format("YYYY-MM-DD")}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          marginTop: 10,
+          borderBottomColor: "#b7b7b7",
+          borderBottomWidth: 2
+        }}
+      />
+      <PTRView onRefresh={_refresh}>
+        {renderSelectedTab()}
         <DatePickerDialog ref={startDateRef} onDatePicked={setStartDate} />
         <DatePickerDialog ref={endDateRef} onDatePicked={setEndDate} />
       </PTRView>

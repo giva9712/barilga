@@ -1,5 +1,12 @@
 import React, { Component, useState, useEffect } from "react";
-import { StyleSheet, Image, View, ToastAndroid } from "react-native";
+import {
+  StyleSheet,
+  Image,
+  View,
+  ToastAndroid,
+  ScrollView,
+  KeyboardAvoidingView
+} from "react-native";
 import { Platform, StatusBar } from "react-native";
 
 import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
@@ -11,7 +18,8 @@ import {
   List,
   Text,
   Spinner,
-  Icon
+  Icon,
+  Input
 } from "@ui-kitten/components";
 
 import ToggleSwitch from "toggle-switch-react-native";
@@ -38,7 +46,13 @@ const ItemDetail = props => {
   const renderBackAction = () => (
     <TopNavigationAction
       icon={IOSArrowBack}
-      onPress={() => navigation.goBack()}
+      onPress={() => {
+        if (itemDetail.id) {
+          navigation.navigate("History");
+        } else {
+          navigation.goBack();
+        }
+      }}
     />
   );
 
@@ -46,8 +60,18 @@ const ItemDetail = props => {
   const [itemDetail, setItemDetail] = useState({
     ...navigation.state.params.item
   });
+  console.log("-------------", navigation.state.params);
 
-  const [updating, setUpdating] = useState({ isIncome: false, value: 1 });
+  const [updating, setUpdating] = useState({
+    isIncome: itemDetail.is_income ? true : false,
+    value: itemDetail.is_income
+      ? itemDetail.in_count
+        ? itemDetail.in_count
+        : 1
+      : itemDetail.out_count
+      ? itemDetail.out_count
+      : 1
+  });
 
   useEffect(() => {
     _isMounted = true;
@@ -57,12 +81,12 @@ const ItemDetail = props => {
   _saveUpdates = () => {
     api
       .post("/save-item-tran", {
-        item_id: itemDetail.id,
+        item_id: itemDetail.item_id,
         warehouse_id: itemDetail.warehouse_id,
         in_count: updating.isIncome ? updating.value : 0,
         out_count: !updating.isIncome ? updating.value : 0,
         is_income: updating.isIncome,
-        description: "test",
+        description: controlInputChanges.value,
         created_by: created_by
       })
       .then(res => {
@@ -76,6 +100,16 @@ const ItemDetail = props => {
         ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
       });
   };
+
+  const useInputChanges = (initialValue = "") => {
+    const [value, setValue] = React.useState(initialValue);
+    return {
+      value,
+      onChangeText: setValue
+    };
+  };
+
+  const controlInputChanges = useInputChanges(itemDetail.description);
 
   const _refresh = () => {
     _fetchData();
@@ -93,6 +127,7 @@ const ItemDetail = props => {
   };
 
   const color = updating.isIncome ? "#7ED32E" : "#FF3A3A";
+  scrollRef = React.createRef();
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <PTRView onRefresh={_refresh}>
@@ -101,27 +136,33 @@ const ItemDetail = props => {
           alignment="center"
           leftControl={renderBackAction()}
         />
-        {loading ? (
-          <View
-            style={{
-              paddingVertical: 30,
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Spinner size="giant" />
-          </View>
-        ) : (
-          <View>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior="position"
+          enabled
+          keyboardVerticalOffset={100}
+        >
+          {loading ? (
             <View
               style={{
-                paddingTop: 15,
+                paddingVertical: 30,
+                flex: 1,
                 justifyContent: "center",
                 alignItems: "center"
               }}
             >
-              {/* <ImageLoader
+              <Spinner size="giant" />
+            </View>
+          ) : (
+            <View>
+              <View
+                style={{
+                  paddingTop: 15,
+                  justifyContent: "center",
+                  alignItems: "center"
+                }}
+              >
+                {/* <ImageLoader
                 imageStyle={{
                   height: 260,
                   width: 260,
@@ -133,96 +174,107 @@ const ItemDetail = props => {
                     : noAvailableImage
                 }
               /> */}
-              <Image
-                style={{
-                  height: 260,
-                  width: 260,
-                  justifyContent: "center"
-                }}
-                source={
-                  !!itemDetail.img_path
-                    ? { uri: itemDetail.img_path }
-                    : noAvailableImage
-                }
-              />
-            </View>
-            <View
-              style={{
-                paddingTop: 20,
-                paddingBottom: 20,
-                flex: 1,
-                width: "100%",
-                flexWrap: "wrap",
-                alignItems: "flex-start",
-                flexDirection: "row",
-                paddingLeft: 20,
-                paddingRight: 30
-              }}
-            >
-              <View style={{ width: "50%" }}>
-                <ToggleSwitch
-                  isOn={updating.isIncome}
-                  onColor="#7ED32E"
-                  offColor="#FF3A3A"
-                  label={updating.isIncome ? "Орлого" : "Зарлага"}
-                  labelStyle={{ color: "black", fontWeight: "900" }}
-                  size="large"
-                  onToggle={isOn =>
-                    setUpdating({
-                      ...updating,
-                      isIncome: !updating.isIncome
-                    })
+                <Image
+                  style={{
+                    height: 260,
+                    width: 260,
+                    justifyContent: "center"
+                  }}
+                  source={
+                    !!itemDetail.img_path
+                      ? { uri: itemDetail.img_path }
+                      : noAvailableImage
                   }
                 />
               </View>
               <View
                 style={{
-                  width: "50%",
+                  paddingTop: 20,
+                  paddingBottom: 20,
+                  flex: 1,
+                  width: "100%",
+                  flexWrap: "wrap",
+                  alignItems: "flex-start",
                   flexDirection: "row",
-                  justifyContent: "flex-end"
+                  paddingLeft: 20,
+                  paddingRight: 30
                 }}
               >
-                <Text
-                  category="h1"
+                <View style={{ width: "50%" }}>
+                  <ToggleSwitch
+                    isOn={updating.isIncome}
+                    onColor="#7ED32E"
+                    offColor="#FF3A3A"
+                    label={updating.isIncome ? "Орлого" : "Зарлага"}
+                    labelStyle={{ color: "black", fontWeight: "900" }}
+                    size="large"
+                    onToggle={isOn =>
+                      setUpdating({
+                        ...updating,
+                        isIncome: !updating.isIncome
+                      })
+                    }
+                  />
+                </View>
+                <View
                   style={{
-                    color: color
+                    width: "50%",
+                    flexDirection: "row",
+                    justifyContent: "flex-end"
                   }}
                 >
-                  {updating.isIncome ? "+" : "-"}
-                  {updating.value}
-                </Text>
+                  <Text
+                    category="h1"
+                    style={{
+                      color: color
+                    }}
+                  >
+                    {updating.isIncome ? "+" : "-"}
+                    {updating.value}
+                  </Text>
+                </View>
+              </View>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <NumericInput
+                  value={updating.value}
+                  onChange={value => setUpdating({ ...updating, value })}
+                  onLimitReached={(isMax, msg) => console.log(isMax, msg)}
+                  totalWidth={240}
+                  totalHeight={50}
+                  iconSize={25}
+                  step={1}
+                  minValue={1}
+                  valueType="real"
+                  rounded
+                  textColor="#000"
+                  iconStyle={{ color: "white" }}
+                  rightButtonBackgroundColor={color}
+                  leftButtonBackgroundColor={color}
+                />
+              </View>
+              <View style={styles.controlContainer}>
+                <Input
+                  style={styles.input}
+                  status="control"
+                  placeholder="Гүйлгээний утга"
+                  {...controlInputChanges}
+                />
+              </View>
+              <View
+                style={{
+                  // marginTop: 30,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingVertical: 30
+                }}
+              >
+                <Button style={{ width: 230 }} onPress={() => _saveUpdates()}>
+                  {itemDetail.id ? "Шинэчлэх" : "Хадгалах"}
+                </Button>
               </View>
             </View>
-            <View style={{ justifyContent: "center", alignItems: "center" }}>
-              <NumericInput
-                value={updating.value}
-                onChange={value => setUpdating({ ...updating, value })}
-                onLimitReached={(isMax, msg) => console.log(isMax, msg)}
-                totalWidth={240}
-                totalHeight={50}
-                iconSize={25}
-                step={1}
-                minValue={1}
-                valueType="real"
-                rounded
-                textColor="#000"
-                iconStyle={{ color: "white" }}
-                rightButtonBackgroundColor={color}
-                leftButtonBackgroundColor={color}
-              />
-            </View>
-            <View
-              style={{
-                // marginTop: 30,
-                justifyContent: "center",
-                alignItems: "center",
-                paddingVertical: 30
-              }}
-            >
-              <Button onPress={() => _saveUpdates()}>Хадгалах</Button>
-            </View>
-          </View>
-        )}
+          )}
+        </KeyboardAvoidingView>
       </PTRView>
     </SafeAreaLayout>
   );
@@ -239,6 +291,15 @@ const styles = StyleSheet.create({
   },
   flex: {
     flex: 1
+  },
+  input: {
+    margin: 8
+  },
+  controlContainer: {
+    borderRadius: 4,
+    margin: 8,
+    marginHorizontal: 30,
+    backgroundColor: "#3366FF"
   }
 });
 

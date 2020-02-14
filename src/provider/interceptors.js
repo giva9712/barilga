@@ -25,6 +25,8 @@ api.interceptors.response.use(
   response => {
     if (response.data.jwtToken) {
       dispatch(saveToken(response.data.jwtToken));
+    } else if (response.data.token) {
+      dispatch(saveToken(response.data.token));
     }
     return response;
   },
