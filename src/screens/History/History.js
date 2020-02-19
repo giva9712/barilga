@@ -148,7 +148,7 @@ const History = props => {
   const gotoHistory = item => {
     console.log(item);
     navigation.navigate("ItemDetail", {
-      item: { ...item, id: 1, name: item.item_name }
+      item: { ...item, id: item.id, name: item.item_name }
     });
   };
 

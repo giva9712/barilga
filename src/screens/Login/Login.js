@@ -17,10 +17,6 @@ const PersonIcon = style => (
   <Icon {...style} name="ios-person" pack="ionicons" />
 );
 
-const EyeOffIcon = style => (
-  <Icon {...style} name="md-eye-off" pack="ionicons" />
-);
-
 const Login = props => {
   const { navigation } = props;
   const [username, setUsername] = useState(
@@ -32,6 +28,17 @@ const Login = props => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [remember, setRemember] = useState(!!props.loginInfo);
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const EyeOffIcon = style => (
+    <Icon
+      {...style}
+      onPress={() => setShowPassword(!showPassword)}
+      name={showPassword ? "md-eye-off" : "md-eye"}
+      pack="ionicons"
+    />
+  );
   useEffect(() => {}, []);
 
   const onSignInButtonPress = () => {
@@ -49,7 +56,7 @@ const Login = props => {
           if (remember) {
             props.rememberLogin({
               username,
-              password
+              password: null
             });
           } else {
             props.rememberLogin(null);
@@ -112,9 +119,8 @@ const Login = props => {
             status="control"
             placeholder="Нүүц үг"
             value={password}
-            secureTextEntry={!passwordVisible}
+            secureTextEntry={!showPassword}
             onChangeText={setPassword}
-            onIconPress={onPasswordIconPress}
             icon={EyeOffIcon}
           />
           <View

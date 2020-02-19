@@ -50,45 +50,35 @@ const WarehouseItems = props => {
       pack={!!searchQuery ? "ionicons" : "feather"}
     />
   );
-
+  const _fetchData = () => {
+    setLoading(true);
+    api
+      .get(`/get-items?warehouse_id=${warehouse_id}&balance=1`)
+      .then(res => {
+        let tempVar = [...res.data.data];
+        for (let index = 0; index < tempVar.length; index++) {
+          tempVar[index]["warehouse_id"] = warehouse_id;
+        }
+        console.log(tempVar);
+        setFilteredProducts(tempVar);
+        setProducts(tempVar);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
   useEffect(() => {
     _isMounted = true;
-    const _fetchData = () => {
-      setLoading(true);
-      api
-        .get(`/get-items?warehouse_id=${warehouse_id}`)
-        .then(res => {
-          let tempVar = [...res.data.data];
-          for (let index = 0; index < tempVar.length; index++) {
-            tempVar[index]["warehouse_id"] = warehouse_id;
-          }
-          console.log(tempVar);
-          setFilteredProducts(tempVar);
-          setProducts(tempVar);
-          setLoading(false);
-        })
-        .catch(err => {
-          console.log(err);
-          setLoading(false);
-        });
-    };
     _fetchData();
   }, []);
-
-  const getAndLoadImage = async BASE64_URI => {
-    const response = await api.get(BASE64_URI);
-    return response.data;
-  };
 
   const _refresh = () => {
     _fetchData();
   };
 
   const onItemActionPress = item => {
-    console.log("######", item);
-    console.log({
-      item: { ...item, description: "", id: null, item_id: item.id }
-    });
     navigation.navigate("ItemDetail", {
       item: { ...item, description: "", id: null, item_id: item.id }
     });
@@ -127,6 +117,14 @@ const WarehouseItems = props => {
     <TopNavigationAction icon={SearchIcon} onPress={showSearchSection} />
   );
 
+  inputRef = React.useRef();
+
+  useEffect(() => {
+    if (showSearch) {
+      inputRef.current.focus();
+    }
+  }, [showSearch]);
+
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <TopNavigation
@@ -135,38 +133,39 @@ const WarehouseItems = props => {
         leftControl={renderBackAction()}
         rightControls={renderSearchAction()}
       />
-      <PTRView onRefresh={_refresh}>
-        <View style={{ flex: 1 }}>
-          {showSearch && (
-            <Input
-              style={styles.searchInput}
-              placeholder="Хайх"
-              onChangeText={text => setSearchQuery(text)}
-              value={searchQuery}
-              icon={InputIcon}
-              onIconPress={onIconPress}
-            />
-          )}
+      <View>
+        {showSearch && (
+          <Input
+            ref={inputRef}
+            style={styles.searchInput}
+            placeholder="Хайх"
+            onChangeText={text => setSearchQuery(text)}
+            value={searchQuery}
+            icon={InputIcon}
+            onIconPress={onIconPress}
+          />
+        )}
 
-          {products.length > 0 && (
-            <Text style={styles.headerTitle} appearance="hint">
-              {navigation.state.params.item.name}-ын бараанууд
-            </Text>
-          )}
-        </View>
-        {loading ? (
-          <View
-            style={{
-              paddingVertical: 30,
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Spinner size="giant" />
-          </View>
-        ) : (
-          <ScrollView style={styles.container}>
+        {products.length > 0 && (
+          <Text style={styles.headerTitle} appearance="hint">
+            {navigation.state.params.item.name}-ын бараанууд
+          </Text>
+        )}
+      </View>
+      <PTRView onRefresh={_refresh}>
+        <ScrollView style={styles.container}>
+          {loading ? (
+            <View
+              style={{
+                paddingVertical: 30,
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Spinner size="giant" />
+            </View>
+          ) : (
             <View style={{ flex: 1 }}>
               {filteredProducts.length > 0 ? (
                 <List data={filteredProducts} renderItem={renderProductItem} />
@@ -176,8 +175,8 @@ const WarehouseItems = props => {
                 </View>
               )}
             </View>
-          </ScrollView>
-        )}
+          )}
+        </ScrollView>
       </PTRView>
     </SafeAreaLayout>
   );

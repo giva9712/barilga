@@ -48,9 +48,9 @@ const ItemDetail = props => {
       icon={IOSArrowBack}
       onPress={() => {
         if (itemDetail.id) {
-          navigation.navigate("History");
+          navigation.navigate("WarehouseList");
         } else {
-          navigation.goBack();
+          navigation.navigate("WarehouseItems");
         }
       }}
     />
@@ -60,7 +60,7 @@ const ItemDetail = props => {
   const [itemDetail, setItemDetail] = useState({
     ...navigation.state.params.item
   });
-  console.log("-------------", navigation.state.params);
+  // console.log("-------------", navigation.state.params);
 
   const [updating, setUpdating] = useState({
     isIncome: itemDetail.is_income ? true : false,
@@ -87,10 +87,15 @@ const ItemDetail = props => {
         out_count: !updating.isIncome ? updating.value : 0,
         is_income: updating.isIncome,
         description: controlInputChanges.value,
-        created_by: created_by
+        created_by: created_by,
+        ...(itemDetail.id && { id: itemDetail.id })
       })
       .then(res => {
-        ToastAndroid.show("Successfully saved!", ToastAndroid.SHORT);
+        if (itemDetail.id == null)
+          ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
+        else {
+          ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
+        }
         navigation.goBack();
       })
       .catch(err => {
@@ -130,17 +135,17 @@ const ItemDetail = props => {
   scrollRef = React.createRef();
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
+      <TopNavigation
+        title={navigation.state.params.item.name}
+        alignment="center"
+        leftControl={renderBackAction()}
+      />
       <PTRView onRefresh={_refresh}>
-        <TopNavigation
-          title={navigation.state.params.item.name}
-          alignment="center"
-          leftControl={renderBackAction()}
-        />
         <KeyboardAvoidingView
           style={styles.container}
           behavior="position"
           enabled
-          keyboardVerticalOffset={100}
+          keyboardVerticalOffset={130}
         >
           {loading ? (
             <View
@@ -176,8 +181,8 @@ const ItemDetail = props => {
               /> */}
                 <Image
                   style={{
-                    height: 260,
-                    width: 260,
+                    height: 160,
+                    width: 160,
                     justifyContent: "center"
                   }}
                   source={

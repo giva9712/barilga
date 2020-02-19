@@ -16,6 +16,9 @@ const WarehouseList = props => {
 
   useEffect(() => {
     _fetchData();
+    return () => {
+      //
+    };
   }, []);
 
   const _fetchData = () => {
@@ -40,21 +43,21 @@ const WarehouseList = props => {
 
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
-      <PTRView onRefresh={_refresh}>
-        <View>
-          <TopNavigation title="Агуулах" alignment="center" />
-          {loading ? (
-            <View
-              style={{
-                paddingVertical: 30,
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Spinner size="giant" />
-            </View>
-          ) : (
+      <View style={{ flex: 1 }}>
+        <TopNavigation title="Агуулах" alignment="center" />
+        {loading ? (
+          <View
+            style={{
+              paddingVertical: 30,
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
+          >
+            <Spinner size="giant" />
+          </View>
+        ) : (
+          <PTRView onRefresh={_refresh}>
             <View>
               {data.length > 0 ? (
                 <LayoutList data={data} onItemPress={_gotoWarehouse} />
@@ -64,9 +67,9 @@ const WarehouseList = props => {
                 </View>
               )}
             </View>
-          )}
-        </View>
-      </PTRView>
+          </PTRView>
+        )}
+      </View>
     </SafeAreaLayout>
   );
 };

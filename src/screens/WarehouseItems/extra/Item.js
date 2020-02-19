@@ -41,7 +41,7 @@ export const Item = props => {
             disabled={!decrementButtonEnabled()}
           /> */}
           <Text style={styles.amount} category="s2">
-            Тоо ширхэг: {`${product.minimum_balance}`}
+            Тоо ширхэг: {`${product.balance}`}
           </Text>
           {/* <Button
             style={[styles.iconButton, styles.amountButton]}
