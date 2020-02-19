@@ -47,11 +47,7 @@ const ItemDetail = props => {
     <TopNavigationAction
       icon={IOSArrowBack}
       onPress={() => {
-        if (itemDetail.id) {
-          navigation.navigate("WarehouseList");
-        } else {
-          navigation.navigate("WarehouseItems");
-        }
+        navigation.goBack();
       }}
     />
   );

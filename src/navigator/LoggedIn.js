@@ -51,6 +51,9 @@ const historyController = createStackNavigator(
   {
     History: {
       screen: History
+    },
+    updateItemDetail: {
+      screen: ItemDetail
     }
   },
   {

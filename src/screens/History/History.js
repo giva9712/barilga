@@ -125,12 +125,26 @@ const History = props => {
       <Text style={styles.itemDescription} appearance="hint">
         {item.warehouse_name}
       </Text>
-      <Text
-        style={{ ...styles.itemDescription, marginTop: 20 }}
-        appearance="hint"
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignItems: "flex-start",
+          marginTop: 20
+        }}
       >
-        {item.description}
-      </Text>
+        <View style={{ width: "50%" }}>
+          <Text style={{ ...styles.itemDescription }} appearance="hint">
+            {item.description}
+          </Text>
+        </View>
+        <View style={{ width: "50%", textAlign: "right" }}>
+          <Text style={{ textAlign: "right" }} appearance="hint">
+            {moment(item.created_date).format("YYYY-MM-DD HH:mm")}
+          </Text>
+        </View>
+      </View>
       <RenderItemAccessory
         style={{
           position: "absolute",
@@ -147,7 +161,7 @@ const History = props => {
 
   const gotoHistory = item => {
     console.log(item);
-    navigation.navigate("ItemDetail", {
+    navigation.navigate("updateItemDetail", {
       item: { ...item, id: item.id, name: item.item_name }
     });
   };
@@ -164,12 +178,26 @@ const History = props => {
       <Text style={styles.itemDescription} appearance="hint">
         {item.warehouse_name}
       </Text>
-      <Text
-        style={{ ...styles.itemDescription, marginTop: 20 }}
-        appearance="hint"
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          flexWrap: "wrap",
+          alignItems: "flex-start",
+          marginTop: 20
+        }}
       >
-        {item.description}
-      </Text>
+        <View style={{ width: "50%" }}>
+          <Text style={{ ...styles.itemDescription }} appearance="hint">
+            {item.description}
+          </Text>
+        </View>
+        <View style={{ width: "50%", textAlign: "right" }}>
+          <Text style={{ textAlign: "right" }} appearance="hint">
+            {moment(item.created_date).format("YYYY-MM-DD HH:mm")}
+          </Text>
+        </View>
+      </View>
       <RenderItemAccessory
         style={{
           position: "absolute",
