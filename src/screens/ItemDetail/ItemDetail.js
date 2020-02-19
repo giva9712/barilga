@@ -141,7 +141,7 @@ const ItemDetail = props => {
           style={styles.container}
           behavior="position"
           enabled
-          keyboardVerticalOffset={130}
+          keyboardVerticalOffset={160}
         >
           {loading ? (
             <View
@@ -158,7 +158,7 @@ const ItemDetail = props => {
             <View>
               <View
                 style={{
-                  paddingTop: 15,
+                  paddingTop: 0,
                   justifyContent: "center",
                   alignItems: "center"
                 }}
@@ -177,8 +177,8 @@ const ItemDetail = props => {
               /> */}
                 <Image
                   style={{
-                    height: 160,
-                    width: 160,
+                    height: 240,
+                    width: 240,
                     justifyContent: "center"
                   }}
                   source={
@@ -255,8 +255,7 @@ const ItemDetail = props => {
               </View>
               <View style={styles.controlContainer}>
                 <Input
-                  style={styles.input}
-                  status="control"
+                  status="primary"
                   placeholder="Гүйлгээний утга"
                   {...controlInputChanges}
                 />
@@ -265,8 +264,7 @@ const ItemDetail = props => {
                 style={{
                   // marginTop: 30,
                   justifyContent: "center",
-                  alignItems: "center",
-                  paddingVertical: 30
+                  alignItems: "center"
                 }}
               >
                 <Button style={{ width: 230 }} onPress={() => _saveUpdates()}>
@@ -299,8 +297,8 @@ const styles = StyleSheet.create({
   controlContainer: {
     borderRadius: 4,
     margin: 8,
-    marginHorizontal: 30,
-    backgroundColor: "#3366FF"
+    marginHorizontal: 30
+    // backgroundColor: "#3366FF"
   }
 });
 
