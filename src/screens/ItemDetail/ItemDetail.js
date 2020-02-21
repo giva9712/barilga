@@ -1,10 +1,9 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Image,
   View,
   ToastAndroid,
-  ScrollView,
   KeyboardAvoidingView
 } from "react-native";
 import { Platform, StatusBar } from "react-native";
@@ -15,7 +14,6 @@ import {
   TopNavigation,
   TopNavigationAction,
   Button,
-  List,
   Text,
   Spinner,
   Icon,
@@ -29,8 +27,6 @@ import NumericInput from "react-native-numeric-input";
 import api from "../../provider/interceptors";
 
 import { store } from "../../store";
-
-import ImageLoader from "../../component/ImageLoader/ImageLoader";
 
 const noAvailableImage = require("../../../assets/images/No_picture_available.png");
 
@@ -75,31 +71,48 @@ const ItemDetail = props => {
   }, []);
 
   _saveUpdates = () => {
-    api
-      .post("/save-item-tran", {
-        item_id: itemDetail.item_id,
-        warehouse_id: itemDetail.warehouse_id,
-        in_count: updating.isIncome ? updating.value : 0,
-        out_count: !updating.isIncome ? updating.value : 0,
-        is_income: updating.isIncome,
-        description: controlInputChanges.value,
-        created_by: created_by,
-        ...(itemDetail.id && { id: itemDetail.id })
-      })
-      .then(res => {
-        if (itemDetail.id == null)
-          ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
-        else {
-          ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
-        }
-        navigation.goBack();
-      })
-      .catch(err => {
-        console.log(err.response);
-        console.log(err.response.data.error);
-
-        ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
-      });
+    if (isNotEmpty && updating.value > 0) {
+      api
+        .post("/save-item-tran", {
+          item_id: itemDetail.item_id,
+          warehouse_id: itemDetail.warehouse_id,
+          in_count: updating.isIncome ? updating.value : 0,
+          out_count: !updating.isIncome ? updating.value : 0,
+          is_income: updating.isIncome,
+          description: controlInputChanges.value,
+          created_by: created_by,
+          ...(itemDetail.id && { id: itemDetail.id })
+        })
+        .then(res => {
+          if (itemDetail.id == null)
+            ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
+          else {
+            ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
+          }
+          navigation.goBack();
+        })
+        .catch(err => {
+          console.log(err.response);
+          console.log(err.response.data.error);
+          ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
+        });
+    } else if (updating.value <= 0) {
+      ToastAndroid.showWithGravityAndOffset(
+        "Гүйлгээний тоо буруу байна!",
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER,
+        25,
+        50
+      );
+    } else {
+      ToastAndroid.showWithGravityAndOffset(
+        "Гүйлгээний утга хоосон байж болохгүй!",
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER,
+        25,
+        50
+      );
+    }
   };
 
   const useInputChanges = (initialValue = "") => {
@@ -126,6 +139,9 @@ const ItemDetail = props => {
       setLoading(false);
     });
   };
+
+  const isNotEmpty =
+    controlInputChanges.value && controlInputChanges.value.length > 0;
 
   const color = updating.isIncome ? "#7ED32E" : "#FF3A3A";
   scrollRef = React.createRef();
@@ -237,9 +253,17 @@ const ItemDetail = props => {
               </View>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <NumericInput
-                  value={updating.value}
+                  value={parseInt(updating.value)}
                   onChange={value => setUpdating({ ...updating, value })}
-                  onLimitReached={(isMax, msg) => console.log(isMax, msg)}
+                  onLimitReached={(isMax, msg) => {
+                    ToastAndroid.showWithGravityAndOffset(
+                      "Гүйлгээний тоо буруу байна!",
+                      ToastAndroid.LONG,
+                      ToastAndroid.CENTER,
+                      25,
+                      50
+                    );
+                  }}
                   totalWidth={240}
                   totalHeight={50}
                   iconSize={25}
@@ -255,7 +279,14 @@ const ItemDetail = props => {
               </View>
               <View style={styles.controlContainer}>
                 <Input
-                  status="primary"
+                  status={
+                    isNotEmpty || updating.isIncome ? "primary" : "danger"
+                  }
+                  caption={
+                    isNotEmpty || updating.isIncome
+                      ? ""
+                      : "Хоосон байж болохгүй!"
+                  }
                   placeholder="Гүйлгээний утга"
                   {...controlInputChanges}
                 />

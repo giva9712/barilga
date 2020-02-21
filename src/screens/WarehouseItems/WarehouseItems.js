@@ -1,11 +1,10 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import PTRView from "react-native-pull-to-refresh";
 
 import {
   TopNavigation,
   TopNavigationAction,
-  Button,
   List,
   Text,
   Spinner,
@@ -26,6 +25,7 @@ const SearchIcon = style => <Icon {...style} name="search" pack="feather" />;
 
 const WarehouseItems = props => {
   const { navigation } = props;
+  const _isMounted = useRef(true);
 
   const warehouse_id = navigation.state.params.item.id;
 
@@ -59,7 +59,6 @@ const WarehouseItems = props => {
         for (let index = 0; index < tempVar.length; index++) {
           tempVar[index]["warehouse_id"] = warehouse_id;
         }
-        console.log(tempVar);
         setFilteredProducts(tempVar);
         setProducts(tempVar);
         setLoading(false);
@@ -70,9 +69,20 @@ const WarehouseItems = props => {
       });
   };
   useEffect(() => {
-    _isMounted = true;
+    const did_focus = navigation.addListener("didFocus", payload => {
+      _isMounted.current = true;
+      _fetchData();
+    });
+    const did_blur = navigation.addListener("didBlur", payload => {
+      _isMounted.current = false;
+    });
     _fetchData();
-  }, []);
+    return () => {
+      console.log("screen unmounted");
+      did_focus.remove();
+      did_blur.remove();
+    };
+  }, [navigation]);
 
   const _refresh = () => {
     _fetchData();

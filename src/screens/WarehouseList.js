@@ -1,32 +1,45 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import PTRView from "react-native-pull-to-refresh";
 
 import { TopNavigation, Spinner } from "@ui-kitten/components";
 import { SafeAreaLayout } from "../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
-import { LayoutList, LayoutListElement } from "../component/ListItem/ListItem";
+import { LayoutList } from "../component/ListItem/ListItem";
 import api from "../provider/interceptors";
 import { connect } from "react-redux";
 
 const WarehouseList = props => {
   const { navigation } = props;
 
+  const _isMounted = useRef(true);
+
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     _fetchData();
+    const did_focus = navigation.addListener("didFocus", payload => {
+      _isMounted.current = true;
+      _fetchData();
+    });
+    const did_blur = navigation.addListener("didBlur", payload => {
+      _isMounted.current = false;
+    });
     return () => {
-      //
+      console.log("screen unmounted");
+      did_focus.remove();
+      did_blur.remove();
     };
-  }, []);
+  }, [navigation]);
 
   const _fetchData = () => {
     setLoading(true);
     api(`/get-warehouses?user_id=${props.user_id}`)
       .then(res => {
-        setData(res.data.data);
-        setLoading(false);
+        if (_isMounted.current) {
+          setData(res.data.data);
+          setLoading(false);
+        }
       })
       .catch(err => {
         console.log(err);
@@ -36,9 +49,6 @@ const WarehouseList = props => {
     navigation.navigate("WarehouseItems", {
       ...item
     });
-  };
-  const _refresh = () => {
-    _fetchData();
   };
 
   return (
@@ -57,7 +67,7 @@ const WarehouseList = props => {
             <Spinner size="giant" />
           </View>
         ) : (
-          <PTRView onRefresh={_refresh}>
+          <PTRView onRefresh={_fetchData}>
             <View>
               {data.length > 0 ? (
                 <LayoutList data={data} onItemPress={_gotoWarehouse} />

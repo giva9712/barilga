@@ -8,13 +8,8 @@ import {
   Layout,
   Tab,
   TabBar,
-  TabView,
   Text,
-  Input,
-  Icon,
   List,
-  ListItem,
-  Divider,
   Card
 } from "@ui-kitten/components";
 
@@ -29,6 +24,8 @@ import _ from "lodash";
 
 const History = props => {
   const { navigation } = props;
+
+  const _isMounted = useRef(true);
 
   const created_by = store.getState().token.userInfo.username;
 
@@ -57,7 +54,6 @@ const History = props => {
         }
       })
       .then(res => {
-        console.log(res);
         setLoading(false);
         if (selectedIndex == 0) {
           setIncomeHistoryData(
@@ -68,7 +64,6 @@ const History = props => {
             )
           );
         } else {
-          console.log(_.filter(res.data.data, { is_income: 0 }));
           setExpenseHistoryData(
             _.orderBy(
               _.filter(res.data.data, { is_income: 0 }),
@@ -104,6 +99,19 @@ const History = props => {
 
   useEffect(() => {
     _fetchData();
+    const did_focus = navigation.addListener("didFocus", payload => {
+      _isMounted.current = true;
+      _fetchData();
+    });
+    const did_blur = navigation.addListener("didBlur", payload => {
+      _isMounted.current = false;
+    });
+    _fetchData();
+    return () => {
+      console.log("screen unmounted");
+      did_focus.remove();
+      did_blur.remove();
+    };
   }, [selectedIndex, startDate, endDate]);
 
   const RenderItemAccessory = ({ style, item, isIncome }) => (
@@ -160,7 +168,6 @@ const History = props => {
   );
 
   const gotoHistory = item => {
-    console.log(item);
     navigation.navigate("updateItemDetail", {
       item: { ...item, id: item.id, name: item.item_name }
     });
@@ -213,7 +220,6 @@ const History = props => {
   );
 
   const renderSelectedTab = () => {
-    console.log(selectedIndex);
     switch (selectedIndex) {
       case 0:
         return (
