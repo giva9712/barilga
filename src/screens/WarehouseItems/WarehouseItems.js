@@ -73,7 +73,7 @@ const WarehouseItems = props => {
   useEffect(() => {
     setProducts([]);
     if (page == 0) {
-      _fetchData();
+      _fetchData((merge = false));
     } else {
       setPage(0);
     }
@@ -109,18 +109,23 @@ const WarehouseItems = props => {
     }
   }, [showSearch]);
 
-  const _fetchData = () => {
+  const limit = 10;
+
+  const _fetchData = (merge = true) => {
     setLoading(true);
     api
       .get(
-        `/get-items?warehouse_id=${warehouse_id}&balance=1&page=${page}&limit=${10}&search=${searchQuery}`
+        `/get-items?warehouse_id=${warehouse_id}&balance=1&page=${page}&limit=${limit}&search=${searchQuery}`
       )
       .then(res => {
         let tempVar = [...res.data.data];
         for (let index = 0; index < tempVar.length; index++) {
           tempVar[index]["warehouse_id"] = warehouse_id;
         }
-        setProducts([...products, ...tempVar]);
+        if (merge) setProducts([...products, ...tempVar]);
+        else {
+          setProducts(tempVar);
+        }
         setLoading(false);
         if (tempVar.length == 0) {
           ToastAndroid.showWithGravityAndOffset(
@@ -193,11 +198,21 @@ const WarehouseItems = props => {
           data={products}
           keyExtractor={(x, i) => String(i)}
           onEndReached={() => {
-            if (!loading) handleEnd();
+            if (!loading && products.length >= limit) handleEnd();
           }}
           onEndReachedThreshold={0.000001}
           ListFooterComponent={() =>
-            loading ? null : <ActivityIndicator size="large" animating />
+            loading ? (
+              <ActivityIndicator size="large" animating />
+            ) : (
+              <View>
+                {products.length == 0 && (
+                  <View>
+                    <Text style={styles.noData}>Мэдээлэл алга</Text>
+                  </View>
+                )}
+              </View>
+            )
           }
           refreshing={loading}
           renderItem={renderProductItem}

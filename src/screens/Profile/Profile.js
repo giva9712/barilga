@@ -77,7 +77,7 @@ const Profile = props => {
     <Icon
       {...style}
       onPress={() => setShowOldPassword(!showOldPassword)}
-      name={showOldPassword ? "md-eye-off" : "md-eye"}
+      name={showOldPassword ? "md-eye" : "md-eye-off"}
       pack="ionicons"
     />
   );
@@ -85,7 +85,7 @@ const Profile = props => {
     <Icon
       {...style}
       onPress={() => setShowNewPassword(!showNewPassword)}
-      name={showNewPassword ? "md-eye-off" : "md-eye"}
+      name={showNewPassword ? "md-eye" : "md-eye-off"}
       pack="ionicons"
     />
   );

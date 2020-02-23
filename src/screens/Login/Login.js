@@ -35,7 +35,7 @@ const Login = props => {
     <Icon
       {...style}
       onPress={() => setShowPassword(!showPassword)}
-      name={showPassword ? "md-eye-off" : "md-eye"}
+      name={showPassword ? "md-eye" : "md-eye-off"}
       pack="ionicons"
     />
   );
