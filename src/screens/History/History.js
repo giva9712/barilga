@@ -105,6 +105,8 @@ const History = props => {
     });
     const did_blur = navigation.addListener("didBlur", payload => {
       _isMounted.current = false;
+      setIncomeHistoryData([]);
+      setExpenseHistoryData([]);
     });
     _fetchData();
     return () => {

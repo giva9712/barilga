@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "GDSC-WMS",
+    "name": "GDSC",
     "slug": "warehouse-app-giva",
     "description": "Extra job!",
     "privacy": "public",
@@ -19,11 +19,11 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "bundleIdentifier": "com.yourcompany.yourappname",
+      "bundleIdentifier": "mn.gdsc.gdsc",
       "buildNumber": "1.0.0"
     },
     "android": {
-      "package": "com.yourcompany.yourappname"
+      "package": "mn.gdsc.gdsc"
     }
   }
 }

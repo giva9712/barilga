@@ -1,21 +1,26 @@
-import React, { useEffect, useState, useRef } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
-import PTRView from "react-native-pull-to-refresh";
-
+import React, { Component, useState, useEffect, useRef } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
+  Dimensions,
+  View,
+  Text,
+  StyleSheet,
+  ToastAndroid
+} from "react-native";
+import {
+  ListItem,
   TopNavigation,
   TopNavigationAction,
-  List,
-  Text,
-  Spinner,
-  Icon,
-  Input
+  Icon
 } from "@ui-kitten/components";
 import { Item } from "./extra/Item";
 import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
+import PTRView from "react-native-pull-to-refresh";
 import api from "../../provider/interceptors";
 
-import _ from "lodash";
+// Screen Dimensions
+const { height, width } = Dimensions.get("window");
 
 const IOSArrowBack = style => (
   <Icon {...style} name="ios-arrow-back" pack="ionicons" />
@@ -25,49 +30,18 @@ const SearchIcon = style => <Icon {...style} name="search" pack="feather" />;
 
 const WarehouseItems = props => {
   const { navigation } = props;
+
   const _isMounted = useRef(true);
 
   const warehouse_id = navigation.state.params.item.id;
 
-  const renderBackAction = () => (
-    <TopNavigationAction
-      icon={IOSArrowBack}
-      onPress={() => navigation.goBack()}
-    />
-  );
-
-  const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState();
+  const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const InputIcon = style => (
-    <Icon
-      {...style}
-      onPress={onIconPress}
-      name={!!searchQuery ? "md-close-circle" : "search"}
-      pack={!!searchQuery ? "ionicons" : "feather"}
-    />
-  );
-  const _fetchData = () => {
-    setLoading(true);
-    api
-      .get(`/get-items?warehouse_id=${warehouse_id}&balance=1`)
-      .then(res => {
-        let tempVar = [...res.data.data];
-        for (let index = 0; index < tempVar.length; index++) {
-          tempVar[index]["warehouse_id"] = warehouse_id;
-        }
-        setFilteredProducts(tempVar);
-        setProducts(tempVar);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.log(err);
-        setLoading(false);
-      });
-  };
+  const [showSearch, setShowSearch] = useState(false);
+
   useEffect(() => {
     const did_focus = navigation.addListener("didFocus", payload => {
       _isMounted.current = true;
@@ -82,11 +56,7 @@ const WarehouseItems = props => {
       did_focus.remove();
       did_blur.remove();
     };
-  }, [navigation]);
-
-  const _refresh = () => {
-    _fetchData();
-  };
+  }, [navigation, page]);
 
   const onItemActionPress = item => {
     navigation.navigate("ItemDetail", {
@@ -103,29 +73,9 @@ const WarehouseItems = props => {
     />
   );
 
-  const showSearchSection = () => {
-    setShowSearch(!showSearch);
-  };
-
   const onIconPress = () => {
     setSearchQuery("");
   };
-
-  useEffect(() => {
-    if (searchQuery && searchQuery != "") {
-      setFilteredProducts(
-        _.filter(products, function(el) {
-          return el.name.toLowerCase().includes(searchQuery.toLowerCase());
-        })
-      );
-    } else {
-      setFilteredProducts(products);
-    }
-  }, [searchQuery]);
-
-  const renderSearchAction = () => (
-    <TopNavigationAction icon={SearchIcon} onPress={showSearchSection} />
-  );
 
   inputRef = React.useRef();
 
@@ -134,6 +84,51 @@ const WarehouseItems = props => {
       inputRef.current.focus();
     }
   }, [showSearch]);
+
+  const _fetchData = () => {
+    setLoading(true);
+    api
+      .get(
+        `/get-items?warehouse_id=${warehouse_id}&balance=1&page=${page}&limit=${10}&search=${searchQuery}`
+      )
+      .then(res => {
+        let tempVar = [...res.data.data];
+        for (let index = 0; index < tempVar.length; index++) {
+          tempVar[index]["warehouse_id"] = warehouse_id;
+        }
+        setProducts([...products, ...tempVar]);
+        setLoading(false);
+        ToastAndroid.showWithGravityAndOffset(
+          "Цааш унших мэдээлэл алга!",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER,
+          25,
+          50
+        );
+      })
+      .catch(err => {
+        console.log(err);
+        setLoading(false);
+      });
+  };
+  const handleEnd = () => {
+    setPage(page + 1);
+    console.log(page);
+  };
+
+  const renderBackAction = () => (
+    <TopNavigationAction
+      icon={IOSArrowBack}
+      onPress={() => navigation.goBack()}
+    />
+  );
+
+  const renderSearchAction = () => (
+    <TopNavigationAction
+      icon={SearchIcon}
+      onPress={() => setShowSearch(!showSearch)}
+    />
+  );
 
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
@@ -162,32 +157,21 @@ const WarehouseItems = props => {
           </Text>
         )}
       </View>
-      <PTRView onRefresh={_refresh}>
-        <ScrollView style={styles.container}>
-          {loading ? (
-            <View
-              style={{
-                paddingVertical: 30,
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center"
-              }}
-            >
-              <Spinner size="giant" />
-            </View>
-          ) : (
-            <View style={{ flex: 1 }}>
-              {filteredProducts.length > 0 ? (
-                <List data={filteredProducts} renderItem={renderProductItem} />
-              ) : (
-                <View>
-                  <Text style={styles.noData}>Мэдээлэл алга</Text>
-                </View>
-              )}
-            </View>
-          )}
-        </ScrollView>
-      </PTRView>
+      <View style={{ height: height - 180, width: width }}>
+        <FlatList
+          data={products}
+          keyExtractor={(x, i) => String(i)}
+          onEndReached={() => {
+            if (!loading) handleEnd();
+          }}
+          onEndReachedThreshold={0.000001}
+          ListFooterComponent={() =>
+            loading ? null : <ActivityIndicator size="large" animating />
+          }
+          refreshing={loading}
+          renderItem={renderProductItem}
+        />
+      </View>
     </SafeAreaLayout>
   );
 };
@@ -220,7 +204,5 @@ const styles = StyleSheet.create({
     textAlign: "center"
   }
 });
-
-WarehouseItems.defaultProps = {};
 
 export default WarehouseItems;

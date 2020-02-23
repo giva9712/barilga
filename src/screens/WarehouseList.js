@@ -24,6 +24,7 @@ const WarehouseList = props => {
     });
     const did_blur = navigation.addListener("didBlur", payload => {
       _isMounted.current = false;
+      setData([]);
     });
     return () => {
       console.log("screen unmounted");

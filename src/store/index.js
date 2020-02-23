@@ -8,15 +8,15 @@ import { persistStore, persistReducer } from "redux-persist";
 import rootReducer from "./reducers";
 
 const persistConfig = {
-  key: "root",
+  key: "gdsc",
   storage: AsyncStorage
 };
 
 const middlewares = [ReduxThunk];
 
-if (__DEV__) {
-  middlewares.push(createLogger());
-}
+// if (__DEV__) {
+//   middlewares.push(createLogger());
+// }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 

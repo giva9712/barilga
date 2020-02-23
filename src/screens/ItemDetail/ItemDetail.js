@@ -258,7 +258,7 @@ const ItemDetail = props => {
                   onLimitReached={(isMax, msg) => {
                     ToastAndroid.showWithGravityAndOffset(
                       "Гүйлгээний тоо буруу байна!",
-                      ToastAndroid.LONG,
+                      ToastAndroid.SHORT,
                       ToastAndroid.CENTER,
                       25,
                       50
