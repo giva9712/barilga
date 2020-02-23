@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "GDSC",
-    "slug": "warehouse-app-giva",
+    "slug": "gdsc_v2",
     "description": "Extra job!",
     "privacy": "public",
     "sdkVersion": "35.0.0",
@@ -20,7 +20,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "mn.gdsc.gdsc",
-      "buildNumber": "1.0.0"
+      "buildNumber": "2.0.0"
     },
     "android": {
       "package": "mn.gdsc.gdsc"

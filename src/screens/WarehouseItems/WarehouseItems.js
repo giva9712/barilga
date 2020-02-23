@@ -58,6 +58,9 @@ const WarehouseItems = props => {
     });
     const did_blur = navigation.addListener("didBlur", payload => {
       _isMounted.current = false;
+      setProducts([]);
+      setSearchQuery("");
+      setPage(0);
     });
     _fetchData();
     return () => {
