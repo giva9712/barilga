@@ -9,7 +9,7 @@ import {
   ToastAndroid
 } from "react-native";
 import {
-  ListItem,
+  Input,
   TopNavigation,
   TopNavigationAction,
   Icon
@@ -42,6 +42,15 @@ const WarehouseItems = props => {
 
   const [showSearch, setShowSearch] = useState(false);
 
+  const InputIcon = style => (
+    <Icon
+      {...style}
+      onPress={onIconPress}
+      name={!!searchQuery ? "md-close-circle" : "search"}
+      pack={!!searchQuery ? "ionicons" : "feather"}
+    />
+  );
+
   useEffect(() => {
     const did_focus = navigation.addListener("didFocus", payload => {
       _isMounted.current = true;
@@ -57,6 +66,18 @@ const WarehouseItems = props => {
       did_blur.remove();
     };
   }, [navigation, page]);
+
+  useEffect(() => {
+    setProducts([]);
+    if (page == 0) {
+      _fetchData();
+    } else {
+      setPage(0);
+    }
+    return () => {
+      //
+    };
+  }, [searchQuery]);
 
   const onItemActionPress = item => {
     navigation.navigate("ItemDetail", {
@@ -98,13 +119,15 @@ const WarehouseItems = props => {
         }
         setProducts([...products, ...tempVar]);
         setLoading(false);
-        ToastAndroid.showWithGravityAndOffset(
-          "Цааш унших мэдээлэл алга!",
-          ToastAndroid.SHORT,
-          ToastAndroid.CENTER,
-          25,
-          50
-        );
+        if (tempVar.length == 0) {
+          ToastAndroid.showWithGravityAndOffset(
+            "Мэдээлэл алга!",
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+            25,
+            50
+          );
+        }
       })
       .catch(err => {
         console.log(err);
@@ -157,7 +180,12 @@ const WarehouseItems = props => {
           </Text>
         )}
       </View>
-      <View style={{ height: height - 180, width: width }}>
+      <View
+        style={{
+          height: showSearch ? height - 250 : height - 180,
+          width: width
+        }}
+      >
         <FlatList
           data={products}
           keyExtractor={(x, i) => String(i)}

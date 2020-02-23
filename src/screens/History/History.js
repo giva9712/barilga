@@ -98,7 +98,6 @@ const History = props => {
   };
 
   useEffect(() => {
-    _fetchData();
     const did_focus = navigation.addListener("didFocus", payload => {
       _isMounted.current = true;
       _fetchData();

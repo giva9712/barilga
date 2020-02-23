@@ -54,7 +54,7 @@ import styles from "./style.json";
  * }
  * ```
  */
-export class ApplicationProvider extends React.Component {
+export class CustomApplicationProvider extends React.Component {
   constructor(props) {
     super(props);
 

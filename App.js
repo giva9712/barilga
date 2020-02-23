@@ -20,8 +20,10 @@ import {
   FeatherIcons
 } from "./src/component/IconMapper/IconMapper";
 
-import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
+import { IconRegistry } from "@ui-kitten/components";
 import { mapping, light as lightTheme } from "@eva-design/eva";
+
+import { CustomApplicationProvider } from "./src/component/CustomApplicationProvider/CustomApplicationProvider";
 
 import Main from "./src/Main";
 
@@ -121,9 +123,9 @@ const App = () => {
               FeatherIcons
             ]}
           />
-          <ApplicationProvider mapping={mapping} theme={lightTheme}>
+          <CustomApplicationProvider mapping={mapping} theme={lightTheme}>
             {MainApp}
-          </ApplicationProvider>
+          </CustomApplicationProvider>
         </SafeAreaProvider>
       </PersistGate>
     </Provider>
