@@ -64,7 +64,6 @@ const WarehouseItems = props => {
     });
     _fetchData();
     return () => {
-      console.log("screen unmounted");
       did_focus.remove();
       did_blur.remove();
     };
@@ -144,7 +143,6 @@ const WarehouseItems = props => {
   };
   const handleEnd = () => {
     setPage(page + 1);
-    console.log(page);
   };
 
   const renderBackAction = () => (

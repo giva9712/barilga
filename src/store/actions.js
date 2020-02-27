@@ -1,3 +1,8 @@
+export const saveServerIP = serverIP => ({
+  type: "SAVE_SERVER_IP",
+  serverIP
+});
+
 export const rememberLogin = loginInfo => ({
   type: "REMEMBER_LOGIN",
   loginInfo

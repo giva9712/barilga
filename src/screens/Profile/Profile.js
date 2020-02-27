@@ -98,7 +98,6 @@ const Profile = props => {
         new_password: newPassword
       })
       .then(res => {
-        console.log(res.data);
         setShowModal(false);
         ToastAndroid.showWithGravityAndOffset(
           "Амжилттай солигдлоо!",

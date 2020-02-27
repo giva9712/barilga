@@ -8,7 +8,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import rootReducer from "./reducers";
 
 const persistConfig = {
-  key: "gdsc",
+  key: "gdsc_v4",
   storage: AsyncStorage
 };
 

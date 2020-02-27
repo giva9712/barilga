@@ -1,7 +1,8 @@
 import axios from "axios";
+import { store } from "../store";
 
 const api = axios.create({
-  baseURL: "http://18.221.239.96:8800/api",
+  baseURL: store.getState().token.serverIP,
   headers: { "Content-Type": "application/json" }
 });
 

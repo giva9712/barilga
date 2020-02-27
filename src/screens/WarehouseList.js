@@ -27,7 +27,6 @@ const WarehouseList = props => {
       setData([]);
     });
     return () => {
-      console.log("screen unmounted");
       did_focus.remove();
       did_blur.remove();
     };

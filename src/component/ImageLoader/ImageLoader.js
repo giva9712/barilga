@@ -4,7 +4,6 @@ import { Image, View, ActivityIndicator } from "react-native";
 
 const ImageLoader = props => {
   const { style, imageStyle, source } = props;
-  console.log(style);
 
   const [parsedData, setParsedData] = useState("");
   const [loading, setLoading] = useState(false);

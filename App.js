@@ -55,7 +55,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    console.log("mounted");
     setIsMounted(true);
   }, []);
 

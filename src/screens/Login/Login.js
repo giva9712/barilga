@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, ToastAndroid } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  ToastAndroid,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Modal
+} from "react-native";
 import { Button, Input, Text, Icon } from "@ui-kitten/components";
 import { ImageOverlay } from "./extra/image-overlay.component";
 import { KeyboardAvoidingView } from "./extra/3rd-party";
 
 import { connect } from "react-redux";
-import { rememberLogin, saveToken, saveUserInfo } from "../../store/actions";
+import {
+  rememberLogin,
+  saveToken,
+  saveUserInfo,
+  saveServerIP
+} from "../../store/actions";
 import api from "../../provider/interceptors";
 import Loader from "../../component/Loader/Loader";
 
@@ -13,8 +26,21 @@ import CheckBox from "react-native-check-box";
 
 import { MaterialIcons } from "@expo/vector-icons";
 
+import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
+import { AntDesign } from "@expo/vector-icons";
+import { store } from "../../store";
+
 const PersonIcon = style => (
   <Icon {...style} name="ios-person" pack="ionicons" />
+);
+
+const SettingsIcon = style => (
+  <Icon
+    style={{ height: 40, width: 40, color: "white" }}
+    {...style}
+    name="md-settings"
+    pack="ionicons"
+  />
 );
 
 const Login = props => {
@@ -67,13 +93,14 @@ const Login = props => {
         }
       })
       .catch(err => {
-        ToastAndroid.showWithGravityAndOffset(
-          err.response.data.error,
-          ToastAndroid.LONG,
-          ToastAndroid.CENTER,
-          25,
-          50
-        );
+        if (err.response && err.response.data.error)
+          ToastAndroid.showWithGravityAndOffset(
+            err.response.data.error,
+            ToastAndroid.LONG,
+            ToastAndroid.CENTER,
+            25,
+            50
+          );
         setLoading(false);
       });
   };
@@ -89,73 +116,160 @@ const Login = props => {
     setLoading(false);
   };
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSaveServerIP = () => {
+    props.saveServerIP(serverIP);
+    setShowModal(false);
+    ToastAndroid.showWithGravityAndOffset(
+      "Server ip амжилттай солигдлоо!",
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER,
+      25,
+      50
+    );
+  };
+
+  const [serverIP, setServerIP] = useState(store.getState().token.serverIP);
+
   return (
-    <KeyboardAvoidingView>
-      <Loader loading={loading} onRequestClose={onRequestClose} />
-      <ImageOverlay
-        style={styles.container}
-        source={require("../../../assets/images/bg.jpg")}
-      >
-        <View style={styles.headerContainer}>
-          <Image
-            style={{
-              width: 250,
-              height: 200,
-              resizeMode: "stretch"
-            }}
-            source={require("../../../assets/images/logo.jpg")}
-          />
-        </View>
-        <View style={styles.formContainer}>
-          <Input
-            status="control"
-            placeholder="Нэвтрэх"
-            value={username}
-            onChangeText={setUsername}
-            icon={PersonIcon}
-          />
-          <Input
-            style={styles.passwordInput}
-            status="control"
-            placeholder="Нүүц үг"
-            value={password}
-            secureTextEntry={!showPassword}
-            onChangeText={setPassword}
-            icon={EyeOffIcon}
-          />
-          <View
-            style={{ justifyContent: "center", flex: 1, flexDirection: "row" }}
+    <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
+      <KeyboardAvoidingView>
+        <Modal
+          transparent={true}
+          animationType={"none"}
+          visible={showModal}
+          onRequestClose={() => setShowModal(false)}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.modalBackground}
+            onPress={() => setShowModal(false)}
           >
-            <CheckBox
-              style={{ padding: 10, width: 150 }}
-              checkBoxColor="#fff"
-              leftTextStyle={{ color: "#fff" }}
-              checkedImage={
-                <MaterialIcons color="#fff" size={40} name="check-box" />
-              }
-              unCheckedImage={
-                <MaterialIcons
-                  color="#fff"
-                  size={40}
-                  name="check-box-outline-blank"
-                />
-              }
-              onClick={onCheckedChange}
-              isChecked={remember}
-              leftText={"Сануулах"}
+            <TouchableWithoutFeedback>
+              <View style={styles.activityIndicatorWrapper}>
+                <View
+                  style={{
+                    position: "absolute",
+                    zIndex: 99,
+                    top: 20,
+                    right: 20
+                  }}
+                >
+                  <AntDesign
+                    onPress={() => setShowModal(false)}
+                    name="closecircle"
+                    size={32}
+                  />
+                </View>
+                <View>
+                  <Input
+                    style={{
+                      marginHorizontal: 16,
+                      marginTop: 16,
+                      marginBottom: 8,
+
+                      width: 300
+                    }}
+                    placeholder="http://host-address/api"
+                    value={serverIP}
+                    onChangeText={setServerIP}
+                  />
+                </View>
+                <View>
+                  <Button
+                    style={styles.doneButton}
+                    onPress={handleSaveServerIP}
+                  >
+                    Хадгалах
+                  </Button>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        </Modal>
+        <Loader loading={loading} onRequestClose={onRequestClose} />
+        <ImageOverlay
+          style={styles.container}
+          source={require("../../../assets/images/bg.jpg")}
+        >
+          <Button
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: 80
+            }}
+            appearance="ghost"
+            onPress={() => setShowModal(true)}
+            icon={SettingsIcon}
+          />
+
+          <View style={styles.headerContainer}>
+            <Image
+              style={{
+                width: 250,
+                height: 200,
+                resizeMode: "stretch"
+              }}
+              source={require("../../../assets/images/logo.jpg")}
             />
           </View>
-        </View>
+          <View style={styles.formContainer}>
+            <Input
+              status="control"
+              placeholder="Нэвтрэх"
+              value={username}
+              onChangeText={setUsername}
+              icon={PersonIcon}
+            />
+            <Input
+              style={styles.passwordInput}
+              status="control"
+              placeholder="Нүүц үг"
+              value={password}
+              secureTextEntry={!showPassword}
+              onChangeText={setPassword}
+              icon={EyeOffIcon}
+            />
+            <View
+              style={{
+                justifyContent: "center",
+                flex: 1,
+                flexDirection: "row"
+              }}
+            >
+              <CheckBox
+                style={{ padding: 10, width: 150 }}
+                checkBoxColor="#fff"
+                leftTextStyle={{ color: "#fff" }}
+                checkedImage={
+                  <MaterialIcons color="#fff" size={40} name="check-box" />
+                }
+                unCheckedImage={
+                  <MaterialIcons
+                    color="#fff"
+                    size={40}
+                    name="check-box-outline-blank"
+                  />
+                }
+                onClick={onCheckedChange}
+                isChecked={remember}
+                leftText={"Сануулах"}
+              />
+            </View>
+          </View>
 
-        <Button
-          style={styles.signInButton}
-          size="giant"
-          onPress={onSignInButtonPress}
-        >
-          Нэвтрэх
-        </Button>
-      </ImageOverlay>
-    </KeyboardAvoidingView>
+          <Button
+            style={styles.signInButton}
+            size="giant"
+            onPress={onSignInButtonPress}
+          >
+            Нэвтрэх
+          </Button>
+        </ImageOverlay>
+      </KeyboardAvoidingView>
+    </SafeAreaLayout>
   );
 };
 
@@ -183,6 +297,26 @@ const styles = StyleSheet.create({
   signInButton: {
     marginHorizontal: 16,
     marginVertical: 50
+  },
+  doneButton: {
+    margin: 24
+  },
+  modalBackground: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    backgroundColor: "#00000040"
+  },
+  activityIndicatorWrapper: {
+    backgroundColor: "#FFFFFF",
+    height: 400,
+    width: 330,
+    borderRadius: 10,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column"
   }
 });
 
@@ -193,7 +327,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   rememberLogin: loginInfo => dispatch(rememberLogin(loginInfo)),
   saveToken: token => dispatch(saveToken(token)),
-  saveUserInfo: userInfo => dispatch(saveUserInfo(userInfo))
+  saveUserInfo: userInfo => dispatch(saveUserInfo(userInfo)),
+  saveServerIP: serverIP => dispatch(saveServerIP(serverIP))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

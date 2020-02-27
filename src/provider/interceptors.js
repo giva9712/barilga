@@ -9,6 +9,7 @@ const { dispatch } = store;
 
 api.interceptors.request.use(
   config => {
+    config.baseURL = store.getState().token.serverIP;
     const { token } = store.getState();
     if (token) {
       const tokenKey = `${token.token}`;
@@ -31,16 +32,34 @@ api.interceptors.response.use(
     return response;
   },
   error => {
-    if (error.response && error.response.status === 401) {
+    if (error.message == "Network Error") {
+      ToastAndroid.showWithGravityAndOffset(
+        error.message + ": Серверийн ip address-аа шалгана уу!",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50
+      );
+      return Promise.reject(error);
+    } else if (error.response && error.response.status === 401) {
       goToLogin();
       ToastAndroid.showWithGravityAndOffset(
         error.response.data.error,
-        ToastAndroid.LONG,
+        ToastAndroid.SHORT,
         ToastAndroid.CENTER,
         25,
         50
       );
     } else if (error.response && error.response.status === 400) {
+      return Promise.reject(error);
+    } else if (error.response && error.response.status === 404) {
+      ToastAndroid.showWithGravityAndOffset(
+        "404: Not found",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+        25,
+        50
+      );
       return Promise.reject(error);
     }
     return Promise.reject(error);

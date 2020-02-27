@@ -109,7 +109,6 @@ const History = props => {
     });
     _fetchData();
     return () => {
-      console.log("screen unmounted");
       did_focus.remove();
       did_blur.remove();
     };

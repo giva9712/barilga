@@ -2,6 +2,7 @@ import { combineReducers } from "redux";
 
 const rootReducer = (
   state = {
+    serverIP: "http://18.221.239.96:8800/api",
     token: null,
     loginInfo: null,
     userInfo: {},
@@ -11,6 +12,8 @@ const rootReducer = (
   action
 ) => {
   switch (action.type) {
+    case "SAVE_SERVER_IP":
+      return { ...state, serverIP: action.serverIP };
     case "REMEMBER_LOGIN":
       return { ...state, loginInfo: action.loginInfo };
     case "SAVE_USER_INFO":
