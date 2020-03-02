@@ -32,6 +32,11 @@ export const error = error => ({
   error
 });
 
+export const changeRefresh = force_refresh => ({
+  type: "CHANGE_FORCE_REFRESH",
+  force_refresh
+});
+
 export const removeAuth = () => dispatch => {
   dispatch(removeToken());
   dispatch(saveUserInfo({}));

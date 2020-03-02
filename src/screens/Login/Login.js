@@ -130,7 +130,9 @@ const Login = props => {
     );
   };
 
-  const [serverIP, setServerIP] = useState(store.getState().token.serverIP);
+  const [serverIP, setServerIP] = useState(
+    store.getState().rootReducer.serverIP
+  );
 
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
@@ -321,7 +323,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  loginInfo: state.token.loginInfo
+  loginInfo: state.rootReducer.loginInfo
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -8,9 +8,9 @@ import NavigationService from "./navigator/NavigationService";
 // import { getUserToken } from "./store/actions";
 
 const Main = props => {
-  const { token } = store.getState();
+  const { rootReducer } = store.getState();
   const [loggedIn, setLoggedIn] = useState(
-    !!token.token && token.userInfo != {}
+    !!rootReducer.token && rootReducer.userInfo != {}
   );
 
   useEffect(() => {}, []);
@@ -33,10 +33,5 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
-
-// const mapStateToProps = state => ({
-//   token: state.token.token,
-//   userInfo: state.token.userInfo
-// });
 
 export default Main;

@@ -16,9 +16,9 @@ import {
 } from "@ui-kitten/components";
 import { Item } from "./extra/Item";
 import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
-import PTRView from "react-native-pull-to-refresh";
 import api from "../../provider/interceptors";
-
+import { connect } from "react-redux";
+import { changeRefresh } from "../../store/actions";
 // Screen Dimensions
 const { height, width } = Dimensions.get("window");
 
@@ -52,15 +52,22 @@ const WarehouseItems = props => {
   );
 
   useEffect(() => {
+    if (props.force_refresh) {
+      setProducts([]);
+      setPage(0);
+      setSearchQuery("");
+      _fetchData();
+      props.changeRefresh(false);
+    }
+    return () => {};
+  }, [props.force_refresh]);
+
+  useEffect(() => {
     const did_focus = navigation.addListener("didFocus", payload => {
       _isMounted.current = true;
-      _fetchData();
     });
     const did_blur = navigation.addListener("didBlur", payload => {
       _isMounted.current = false;
-      setProducts([]);
-      setSearchQuery("");
-      setPage(0);
     });
     _fetchData();
     return () => {
@@ -249,4 +256,12 @@ const styles = StyleSheet.create({
   }
 });
 
-export default WarehouseItems;
+const mapStateToProps = state => ({
+  force_refresh: state.helperReducer.force_refresh
+});
+
+const mapDispatchToProps = dispatch => ({
+  changeRefresh: value => dispatch(changeRefresh(value))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(WarehouseItems);

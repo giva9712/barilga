@@ -31,6 +31,21 @@ const rootReducer = (
   }
 };
 
+const helperReducer = (
+  state = {
+    force_refresh: false
+  },
+  action
+) => {
+  switch (action.type) {
+    case "CHANGE_FORCE_REFRESH":
+      return { ...state, force_refresh: action.force_refresh };
+    default:
+      return state;
+  }
+};
+
 export default combineReducers({
-  token: rootReducer
+  rootReducer: rootReducer,
+  helperReducer: helperReducer
 });

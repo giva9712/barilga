@@ -25,8 +25,9 @@ import ToggleSwitch from "toggle-switch-react-native";
 import NumericInput from "react-native-numeric-input";
 
 import api from "../../provider/interceptors";
-
+import { connect } from "react-redux";
 import { store } from "../../store";
+import { changeRefresh } from "../../store/actions";
 
 const noAvailableImage = require("../../../assets/images/No_picture_available.png");
 
@@ -37,7 +38,7 @@ const IOSArrowBack = style => (
 const ItemDetail = props => {
   const { navigation } = props;
 
-  const created_by = store.getState().token.userInfo.username;
+  const created_by = store.getState().rootReducer.userInfo.username;
 
   const renderBackAction = () => (
     <TopNavigationAction
@@ -52,7 +53,6 @@ const ItemDetail = props => {
   const [itemDetail, setItemDetail] = useState({
     ...navigation.state.params.item
   });
-  // console.log("-------------", navigation.state.params);
 
   const [updating, setUpdating] = useState({
     isIncome: itemDetail.is_income ? true : false,
@@ -71,7 +71,10 @@ const ItemDetail = props => {
   }, []);
 
   _saveUpdates = () => {
-    if (isNotEmpty && updating.value > 0) {
+    if (
+      ((!updating.isIncome && isNotEmpty) || updating.isIncome) &&
+      updating.value > 0
+    ) {
       api
         .post("/save-item-tran", {
           item_id: itemDetail.item_id,
@@ -89,6 +92,7 @@ const ItemDetail = props => {
           else {
             ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
           }
+          props.changeRefresh(true);
           navigation.goBack();
         })
         .catch(err => {
@@ -341,4 +345,12 @@ ItemDetail.defaultProps = {
   }
 };
 
-export default ItemDetail;
+const mapStateToProps = state => ({
+  force_refresh: state.helperReducer.force_refresh
+});
+
+const mapDispatchToProps = dispatch => ({
+  changeRefresh: force_refresh => dispatch(changeRefresh(force_refresh))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(ItemDetail);

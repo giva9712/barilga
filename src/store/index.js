@@ -8,8 +8,11 @@ import { persistStore, persistReducer } from "redux-persist";
 import rootReducer from "./reducers";
 
 const persistConfig = {
-  key: "gdsc_v4",
-  storage: AsyncStorage
+  key: "root",
+  storage: AsyncStorage,
+  whitelist: ["rootReducer"],
+  // Blacklist (Don't Save Specific Reducers)
+  blacklist: ["helperReducer"]
 };
 
 const middlewares = [ReduxThunk];

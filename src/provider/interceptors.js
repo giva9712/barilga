@@ -9,10 +9,10 @@ const { dispatch } = store;
 
 api.interceptors.request.use(
   config => {
-    config.baseURL = store.getState().token.serverIP;
-    const { token } = store.getState();
-    if (token) {
-      const tokenKey = `${token.token}`;
+    config.baseURL = store.getState().rootReducer.serverIP;
+    const { rootReducer } = store.getState();
+    if (rootReducer) {
+      const tokenKey = `${rootReducer.token}`;
       if (tokenKey) {
         config.headers.authentication = `${tokenKey}`;
       }

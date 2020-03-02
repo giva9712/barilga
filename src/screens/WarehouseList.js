@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
 WarehouseList.defaultProps = {};
 
 const mapStateToProps = state => ({
-  user_id: state.token.userInfo.id
+  user_id: state.rootReducer.userInfo.id
 });
 
 export default connect(mapStateToProps)(WarehouseList);

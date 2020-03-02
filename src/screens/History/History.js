@@ -27,7 +27,7 @@ const History = props => {
 
   const _isMounted = useRef(true);
 
-  const created_by = store.getState().token.userInfo.username;
+  const created_by = store.getState().rootReducer.userInfo.username;
 
   const [loading, setLoading] = useState(false);
 

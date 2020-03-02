@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  userInfo: state.token.userInfo
+  userInfo: state.rootReducer.userInfo
 });
 
 const mapDispatchToProps = dispatch => ({
