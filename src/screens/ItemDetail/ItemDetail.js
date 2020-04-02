@@ -71,6 +71,7 @@ const ItemDetail = props => {
   }, []);
 
   _saveUpdates = () => {
+    setLoading(true);
     if (
       ((!updating.isIncome && isNotEmpty) || updating.isIncome) &&
       updating.value > 0
@@ -94,10 +95,12 @@ const ItemDetail = props => {
           }
           props.changeRefresh(true);
           navigation.goBack();
+          setLoading(false);
         })
         .catch(err => {
           console.log(err.response);
           console.log(err.response.data.error);
+          setLoading(false);
           ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
         });
     } else if (updating.value <= 0) {
@@ -108,6 +111,8 @@ const ItemDetail = props => {
         25,
         50
       );
+
+      setLoading(false);
     } else {
       ToastAndroid.showWithGravityAndOffset(
         "Гүйлгээний утга хоосон байж болохгүй!",
@@ -116,6 +121,7 @@ const ItemDetail = props => {
         25,
         50
       );
+      setLoading(false);
     }
   };
 
@@ -163,27 +169,15 @@ const ItemDetail = props => {
           enabled
           keyboardVerticalOffset={160}
         >
-          {loading ? (
+          <View>
             <View
               style={{
-                paddingVertical: 30,
-                flex: 1,
+                paddingTop: 0,
                 justifyContent: "center",
                 alignItems: "center"
               }}
             >
-              <Spinner size="giant" />
-            </View>
-          ) : (
-            <View>
-              <View
-                style={{
-                  paddingTop: 0,
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-              >
-                {/* <ImageLoader
+              {/* <ImageLoader
                 imageStyle={{
                   height: 260,
                   width: 260,
@@ -195,119 +189,122 @@ const ItemDetail = props => {
                     : noAvailableImage
                 }
               /> */}
-                <Image
-                  style={{
-                    height: 240,
-                    width: 240,
-                    justifyContent: "center"
-                  }}
-                  source={
-                    !!itemDetail.img_path
-                      ? { uri: itemDetail.img_path }
-                      : noAvailableImage
+              <Image
+                style={{
+                  height: 240,
+                  width: 240,
+                  justifyContent: "center"
+                }}
+                source={
+                  !!itemDetail.img_path
+                    ? { uri: itemDetail.img_path }
+                    : noAvailableImage
+                }
+              />
+            </View>
+            <View
+              style={{
+                paddingTop: 20,
+                paddingBottom: 20,
+                flex: 1,
+                width: "100%",
+                flexWrap: "wrap",
+                alignItems: "flex-start",
+                flexDirection: "row",
+                paddingLeft: 20,
+                paddingRight: 30
+              }}
+            >
+              <View style={{ width: "50%" }}>
+                <ToggleSwitch
+                  isOn={updating.isIncome}
+                  onColor="#7ED32E"
+                  offColor="#FF3A3A"
+                  label={updating.isIncome ? "Орлого" : "Зарлага"}
+                  labelStyle={{ color: "black", fontWeight: "900" }}
+                  size="large"
+                  onToggle={isOn =>
+                    setUpdating({
+                      ...updating,
+                      isIncome: !updating.isIncome
+                    })
                   }
                 />
               </View>
               <View
                 style={{
-                  paddingTop: 20,
-                  paddingBottom: 20,
-                  flex: 1,
-                  width: "100%",
-                  flexWrap: "wrap",
-                  alignItems: "flex-start",
+                  width: "50%",
                   flexDirection: "row",
-                  paddingLeft: 20,
-                  paddingRight: 30
+                  justifyContent: "flex-end"
                 }}
               >
-                <View style={{ width: "50%" }}>
-                  <ToggleSwitch
-                    isOn={updating.isIncome}
-                    onColor="#7ED32E"
-                    offColor="#FF3A3A"
-                    label={updating.isIncome ? "Орлого" : "Зарлага"}
-                    labelStyle={{ color: "black", fontWeight: "900" }}
-                    size="large"
-                    onToggle={isOn =>
-                      setUpdating({
-                        ...updating,
-                        isIncome: !updating.isIncome
-                      })
-                    }
-                  />
-                </View>
-                <View
+                <Text
+                  category="h1"
                   style={{
-                    width: "50%",
-                    flexDirection: "row",
-                    justifyContent: "flex-end"
+                    color: color
                   }}
                 >
-                  <Text
-                    category="h1"
-                    style={{
-                      color: color
-                    }}
-                  >
-                    {updating.isIncome ? "+" : "-"}
-                    {updating.value}
-                  </Text>
-                </View>
-              </View>
-              <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <NumericInput
-                  value={parseInt(updating.value)}
-                  onChange={value => setUpdating({ ...updating, value })}
-                  onLimitReached={(isMax, msg) => {
-                    ToastAndroid.showWithGravityAndOffset(
-                      "Гүйлгээний тоо буруу байна!",
-                      ToastAndroid.SHORT,
-                      ToastAndroid.CENTER,
-                      25,
-                      50
-                    );
-                  }}
-                  totalWidth={240}
-                  totalHeight={50}
-                  iconSize={25}
-                  step={1}
-                  minValue={1}
-                  valueType="real"
-                  rounded
-                  textColor="#000"
-                  iconStyle={{ color: "white" }}
-                  rightButtonBackgroundColor={color}
-                  leftButtonBackgroundColor={color}
-                />
-              </View>
-              <View style={styles.controlContainer}>
-                <Input
-                  status={
-                    isNotEmpty || updating.isIncome ? "primary" : "danger"
-                  }
-                  caption={
-                    isNotEmpty || updating.isIncome
-                      ? ""
-                      : "Хоосон байж болохгүй!"
-                  }
-                  placeholder="Гүйлгээний утга"
-                  {...controlInputChanges}
-                />
-              </View>
-              <View
-                style={{
-                  // marginTop: 30,
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-              >
-                <Button style={{ width: 230 }} onPress={() => _saveUpdates()}>
-                  {itemDetail.id ? "Шинэчлэх" : "Хадгалах"}
-                </Button>
+                  {updating.isIncome ? "+" : "-"}
+                  {updating.value}
+                </Text>
               </View>
             </View>
-          )}
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <NumericInput
+                value={parseInt(updating.value)}
+                onChange={value => setUpdating({ ...updating, value })}
+                onLimitReached={(isMax, msg) => {
+                  ToastAndroid.showWithGravityAndOffset(
+                    "Гүйлгээний тоо буруу байна!",
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER,
+                    25,
+                    50
+                  );
+                }}
+                totalWidth={240}
+                totalHeight={50}
+                iconSize={25}
+                step={1}
+                minValue={1}
+                valueType="real"
+                rounded
+                textColor="#000"
+                iconStyle={{ color: "white" }}
+                rightButtonBackgroundColor={color}
+                leftButtonBackgroundColor={color}
+              />
+            </View>
+            <View style={styles.controlContainer}>
+              <Input
+                status={isNotEmpty || updating.isIncome ? "primary" : "danger"}
+                caption={
+                  isNotEmpty || updating.isIncome ? "" : "Хоосон байж болохгүй!"
+                }
+                placeholder="Гүйлгээний утга"
+                {...controlInputChanges}
+              />
+            </View>
+            <View
+              style={{
+                // marginTop: 30,
+                justifyContent: "center",
+                alignItems: "center"
+              }}
+            >
+              <Button
+                disabled={loading}
+                style={{ width: 230 }}
+                onPress={() => _saveUpdates()}
+              >
+                {loading
+                  ? "Түр хүлээнэ үү ..."
+                  : itemDetail.id
+                  ? "Шинэчлэх"
+                  : "Хадгалах"}
+              </Button>
+            </View>
+          </View>
         </KeyboardAvoidingView>
       </PTRView>
     </SafeAreaLayout>
