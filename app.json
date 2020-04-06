@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "GDSC",
-    "slug": "gdsc_v6",
+    "slug": "gdsc_v7",
     "description": "Extra job!",
     "privacy": "public",
     "sdkVersion": "35.0.0",
@@ -20,7 +20,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "mn.gdsc.gdsc",
-      "buildNumber": "6.0.0"
+      "buildNumber": "7.0.0"
     },
     "android": {
       "package": "mn.gdsc.gdsc"

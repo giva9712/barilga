@@ -56,7 +56,7 @@ const WarehouseItems = props => {
       setProducts([]);
       setPage(0);
       setSearchQuery("");
-      _fetchData();
+      _fetchData((merge = false));
       props.changeRefresh(false);
     }
     return () => {};
