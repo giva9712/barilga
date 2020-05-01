@@ -2,12 +2,12 @@ import { combineReducers } from "redux";
 
 const rootReducer = (
   state = {
-    serverIP: "http://18.221.239.96:8800/api",
+    serverIP: "http://43.231.113.183:8080/api",
     token: null,
     loginInfo: null,
     userInfo: {},
     loading: true,
-    error: null
+    error: null,
   },
   action
 ) => {
@@ -33,7 +33,7 @@ const rootReducer = (
 
 const helperReducer = (
   state = {
-    force_refresh: false
+    force_refresh: false,
   },
   action
 ) => {
@@ -47,5 +47,5 @@ const helperReducer = (
 
 export default combineReducers({
   rootReducer: rootReducer,
-  helperReducer: helperReducer
+  helperReducer: helperReducer,
 });

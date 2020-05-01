@@ -8,7 +8,7 @@ import { LayoutList } from "../component/ListItem/ListItem";
 import api from "../provider/interceptors";
 import { connect } from "react-redux";
 
-const WarehouseList = props => {
+const WarehouseList = (props) => {
   const { navigation } = props;
 
   const _isMounted = useRef(true);
@@ -18,11 +18,11 @@ const WarehouseList = props => {
 
   useEffect(() => {
     _fetchData();
-    const did_focus = navigation.addListener("didFocus", payload => {
+    const did_focus = navigation.addListener("didFocus", (payload) => {
       _isMounted.current = true;
       _fetchData();
     });
-    const did_blur = navigation.addListener("didBlur", payload => {
+    const did_blur = navigation.addListener("didBlur", (payload) => {
       _isMounted.current = false;
       setData([]);
     });
@@ -35,19 +35,19 @@ const WarehouseList = props => {
   const _fetchData = () => {
     setLoading(true);
     api(`/get-warehouses?user_id=${props.user_id}`)
-      .then(res => {
+      .then((res) => {
         if (_isMounted.current) {
           setData(res.data.data);
           setLoading(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   };
-  const _gotoWarehouse = item => {
+  const _gotoWarehouse = (item) => {
     navigation.navigate("WarehouseItems", {
-      ...item
+      ...item,
     });
   };
 
@@ -61,7 +61,7 @@ const WarehouseList = props => {
               paddingVertical: 30,
               flex: 1,
               justifyContent: "center",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <Spinner size="giant" />
@@ -86,24 +86,24 @@ const WarehouseList = props => {
 
 const styles = StyleSheet.create({
   base: {
-    paddingTop: 15
+    paddingTop: 15,
   },
   badges: {
     marginTop: 10,
     marginLeft: 10,
     flexDirection: "row",
-    alignSelf: "flex-start"
+    alignSelf: "flex-start",
   },
   noData: {
     paddingVertical: 20,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
 
 WarehouseList.defaultProps = {};
 
-const mapStateToProps = state => ({
-  user_id: state.rootReducer.userInfo.id
+const mapStateToProps = (state) => ({
+  user_id: state.rootReducer.userInfo.id,
 });
 
 export default connect(mapStateToProps)(WarehouseList);

@@ -5,7 +5,7 @@ import { ListItem, Text } from "@ui-kitten/components";
 
 const noAvailableImage = require("../../../../assets/images/No_picture_available.png");
 
-export const Item = props => {
+export const Item = (props) => {
   const { style, product, index, ...listItemProps } = props;
 
   return (
@@ -22,7 +22,7 @@ export const Item = props => {
           <Text
             style={{
               marginVertical: 15,
-              flexShrink: 1
+              flexShrink: 1,
             }}
             appearance="hint"
             category="p2"
@@ -59,33 +59,33 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "flex-start",
     paddingHorizontal: 0,
-    paddingVertical: 0
+    paddingVertical: 0,
   },
   image: {
     width: 120,
     height: 144,
 
-    justifyContent: "center"
+    justifyContent: "center",
   },
   detailsContainer: {
     height: "100%",
     padding: 16,
-    flex: 8
+    flex: 8,
   },
   amountContainer: {
-    flexDirection: "row"
+    flexDirection: "row",
   },
   amountButton: {
-    borderRadius: 16
+    borderRadius: 16,
   },
   amount: {
-    textAlign: "center"
+    textAlign: "center",
   },
   removeButton: {
     position: "absolute",
-    right: 0
+    right: 0,
   },
   iconButton: {
-    paddingHorizontal: 0
-  }
+    paddingHorizontal: 0,
+  },
 });

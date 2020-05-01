@@ -6,13 +6,13 @@ import {
   View,
   Text,
   StyleSheet,
-  ToastAndroid
+  ToastAndroid,
 } from "react-native";
 import {
   Input,
   TopNavigation,
   TopNavigationAction,
-  Icon
+  Icon,
 } from "@ui-kitten/components";
 import { Item } from "./extra/Item";
 import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeAreaLayoutComponent";
@@ -22,13 +22,13 @@ import { changeRefresh } from "../../store/actions";
 // Screen Dimensions
 const { height, width } = Dimensions.get("window");
 
-const IOSArrowBack = style => (
+const IOSArrowBack = (style) => (
   <Icon {...style} name="ios-arrow-back" pack="ionicons" />
 );
 
-const SearchIcon = style => <Icon {...style} name="search" pack="feather" />;
+const SearchIcon = (style) => <Icon {...style} name="search" pack="feather" />;
 
-const WarehouseItems = props => {
+const WarehouseItems = (props) => {
   const { navigation } = props;
 
   const _isMounted = useRef(true);
@@ -42,7 +42,7 @@ const WarehouseItems = props => {
 
   const [showSearch, setShowSearch] = useState(false);
 
-  const InputIcon = style => (
+  const InputIcon = (style) => (
     <Icon
       {...style}
       onPress={onIconPress}
@@ -63,10 +63,10 @@ const WarehouseItems = props => {
   }, [props.force_refresh]);
 
   useEffect(() => {
-    const did_focus = navigation.addListener("didFocus", payload => {
+    const did_focus = navigation.addListener("didFocus", (payload) => {
       _isMounted.current = true;
     });
-    const did_blur = navigation.addListener("didBlur", payload => {
+    const did_blur = navigation.addListener("didBlur", (payload) => {
       _isMounted.current = false;
     });
     _fetchData();
@@ -88,13 +88,13 @@ const WarehouseItems = props => {
     };
   }, [searchQuery]);
 
-  const onItemActionPress = item => {
+  const onItemActionPress = (item) => {
     navigation.navigate("ItemDetail", {
-      item: { ...item, description: "", id: null, item_id: item.id }
+      item: { ...item, description: "", id: null, item_id: item.id },
     });
   };
 
-  const renderProductItem = info => (
+  const renderProductItem = (info) => (
     <Item
       style={styles.item}
       index={info.index}
@@ -121,9 +121,9 @@ const WarehouseItems = props => {
     setLoading(true);
     api
       .get(
-        `/get-items?warehouse_id=${warehouse_id}&balance=1&page=${page}&limit=${limit}&search=${searchQuery}`
+        `/get-items?img_size=250x250&warehouse_id=${warehouse_id}&balance=1&page=${page}&limit=${limit}&search=${searchQuery}`
       )
-      .then(res => {
+      .then((res) => {
         let tempVar = [...res.data.data];
         for (let index = 0; index < tempVar.length; index++) {
           tempVar[index]["warehouse_id"] = warehouse_id;
@@ -143,7 +143,7 @@ const WarehouseItems = props => {
           );
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         setLoading(false);
       });
@@ -180,7 +180,7 @@ const WarehouseItems = props => {
             ref={inputRef}
             style={styles.searchInput}
             placeholder="Хайх"
-            onChangeText={text => setSearchQuery(text)}
+            onChangeText={(text) => setSearchQuery(text)}
             value={searchQuery}
             icon={InputIcon}
             onIconPress={onIconPress}
@@ -196,7 +196,7 @@ const WarehouseItems = props => {
       <View
         style={{
           height: showSearch ? height - 250 : height - 180,
-          width: width
+          width: width,
         }}
       >
         <FlatList
@@ -230,38 +230,38 @@ const WarehouseItems = props => {
 const styles = StyleSheet.create({
   headerTitle: {
     marginHorizontal: 16,
-    marginVertical: 20
+    marginVertical: 20,
   },
   searchInput: {
     marginHorizontal: 16,
     marginTop: 16,
-    marginBottom: 8
+    marginBottom: 8,
   },
   container: {
-    flex: 1
+    flex: 1,
     // paddingBottom: 70
   },
   base: {
-    paddingTop: 15
+    paddingTop: 15,
   },
   badges: {
     marginTop: 10,
     marginLeft: 10,
     flexDirection: "row",
-    alignSelf: "flex-start"
+    alignSelf: "flex-start",
   },
   noData: {
     paddingVertical: 20,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
 
-const mapStateToProps = state => ({
-  force_refresh: state.helperReducer.force_refresh
+const mapStateToProps = (state) => ({
+  force_refresh: state.helperReducer.force_refresh,
 });
 
-const mapDispatchToProps = dispatch => ({
-  changeRefresh: value => dispatch(changeRefresh(value))
+const mapDispatchToProps = (dispatch) => ({
+  changeRefresh: (value) => dispatch(changeRefresh(value)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WarehouseItems);
