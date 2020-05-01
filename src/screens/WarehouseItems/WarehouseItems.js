@@ -121,7 +121,7 @@ const WarehouseItems = (props) => {
     setLoading(true);
     api
       .get(
-        `/get-items?img_size=250x250&warehouse_id=${warehouse_id}&balance=1&page=${page}&limit=${limit}&search=${searchQuery}`
+        `/get-items?img_size=200x200&warehouse_id=${warehouse_id}&balance=1&page=${page}&limit=${limit}&search=${searchQuery}`
       )
       .then((res) => {
         let tempVar = [...res.data.data];
