@@ -1,18 +1,11 @@
+import { Card, List, Text } from "@ui-kitten/components";
 import React from "react";
-import { ListRenderItemInfo, StyleSheet } from "react-native";
-import {
-  Card,
-  CardElement,
-  List,
-  ListElement,
-  ListProps,
-  Text
-} from "@ui-kitten/components";
+import { StyleSheet } from "react-native";
 
-export const LayoutList = props => {
+export const LayoutList = (props) => {
   const { contentContainerStyle, onItemPress, ...listProps } = props;
 
-  const renderItem = info => (
+  const renderItem = (info) => (
     <Card style={styles.itemContainer} onPress={() => onItemPress(info)}>
       <Text category="s1">{info.item.name}</Text>
       <Text style={styles.itemDescription} appearance="hint">
@@ -33,13 +26,13 @@ export const LayoutList = props => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 8,
-    paddingVertical: 8
+    paddingVertical: 8,
   },
   itemContainer: {
     marginVertical: 8,
-    marginHorizontal: 8
+    marginHorizontal: 8,
   },
   itemDescription: {
-    marginTop: 4
-  }
+    marginTop: 4,
+  },
 });

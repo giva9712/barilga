@@ -23,7 +23,7 @@ import { changeRefresh } from "../../store/actions";
 const { height, width } = Dimensions.get("window");
 
 const IOSArrowBack = (style) => (
-  <Icon {...style} name="ios-arrow-back" pack="ionicons" />
+  <Icon {...style} name="ios-arrow-back" pack="ionic" />
 );
 
 const SearchIcon = (style) => <Icon {...style} name="search" pack="feather" />;
@@ -47,7 +47,7 @@ const WarehouseItems = (props) => {
       {...style}
       onPress={onIconPress}
       name={!!searchQuery ? "md-close-circle" : "search"}
-      pack={!!searchQuery ? "ionicons" : "feather"}
+      pack={!!searchQuery ? "ionic" : "feather"}
     />
   );
 
@@ -171,8 +171,8 @@ const WarehouseItems = (props) => {
       <TopNavigation
         title="Барааны жагсаалт"
         alignment="center"
-        leftControl={renderBackAction()}
-        rightControls={renderSearchAction()}
+        accessoryLeft={renderBackAction}
+        accessoryRight={renderSearchAction}
       />
       <View>
         {showSearch && (
@@ -182,7 +182,7 @@ const WarehouseItems = (props) => {
             placeholder="Хайх"
             onChangeText={(text) => setSearchQuery(text)}
             value={searchQuery}
-            icon={InputIcon}
+            accessoryLeft={InputIcon}
             onIconPress={onIconPress}
           />
         )}

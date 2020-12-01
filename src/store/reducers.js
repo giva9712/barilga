@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 
 const rootReducer = (
   state = {
-    serverIP: "http://43.231.113.183:8080/api",
+    serverIP: "https://barilgiin-delguur.mn/api",
     token: null,
     loginInfo: null,
     userInfo: {},

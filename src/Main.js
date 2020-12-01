@@ -7,10 +7,10 @@ import NavigationService from "./navigator/NavigationService";
 
 // import { getUserToken } from "./store/actions";
 
-const Main = props => {
+const Main = (props) => {
   const { rootReducer } = store.getState();
   const [loggedIn, setLoggedIn] = useState(
-    !!rootReducer.token && rootReducer.userInfo != {}
+    !!rootReducer.token && rootReducer.userInfo !== {}
   );
 
   useEffect(() => {}, []);
@@ -20,7 +20,7 @@ const Main = props => {
   return (
     <View style={styles.container}>
       <RootNavigator
-        ref={navigatorRef => {
+        ref={(navigatorRef) => {
           NavigationService.setTopLevelNavigator(navigatorRef);
         }}
       />
@@ -30,8 +30,8 @@ const Main = props => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 export default Main;

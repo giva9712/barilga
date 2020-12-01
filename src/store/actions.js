@@ -1,43 +1,43 @@
-export const saveServerIP = serverIP => ({
+export const saveServerIP = (serverIP) => ({
   type: "SAVE_SERVER_IP",
-  serverIP
+  serverIP,
 });
 
-export const rememberLogin = loginInfo => ({
+export const rememberLogin = (loginInfo) => ({
   type: "REMEMBER_LOGIN",
-  loginInfo
+  loginInfo,
 });
 
-export const saveUserInfo = userInfo => ({
+export const saveUserInfo = (userInfo) => ({
   type: "SAVE_USER_INFO",
-  userInfo
+  userInfo,
 });
 
-export const saveToken = token => ({
+export const saveToken = (token) => ({
   type: "SAVE_TOKEN",
-  token
+  token,
 });
 
 export const removeToken = () => ({
-  type: "REMOVE_TOKEN"
+  type: "REMOVE_TOKEN",
 });
 
-export const loading = bool => ({
+export const loading = (bool) => ({
   type: "LOADING",
-  isLoading: bool
+  isLoading: bool,
 });
 
-export const error = error => ({
+export const error = (error) => ({
   type: "ERROR",
-  error
+  error,
 });
 
-export const changeRefresh = force_refresh => ({
+export const changeRefresh = (force_refresh) => ({
   type: "CHANGE_FORCE_REFRESH",
-  force_refresh
+  force_refresh,
 });
 
-export const removeAuth = () => dispatch => {
+export const removeAuth = () => (dispatch) => {
   dispatch(removeToken());
   dispatch(saveUserInfo({}));
 };

@@ -8,20 +8,18 @@ import { Icon } from "@ui-kitten/components";
 
 import _ from "lodash";
 
-const HomeAssistantIcon = style => (
-  <Icon {...style} name="home-assistant" pack="material-community" />
+const HomeAssistantIcon = (style) => (
+  <Icon {...style} name="home-assistant" pack="material" />
 );
 
-const AccountSettings = style => (
-  <Icon {...style} name="account-settings" pack="material-community" />
+const AccountSettings = (style) => (
+  <Icon {...style} name="account-settings" pack="material" />
 );
 
-const History = style => (
-  <Icon {...style} name="history" pack="material-community" />
-);
+const History = (style) => <Icon {...style} name="history" pack="material" />;
 
-export const HomeBottomNavigation = props => {
-  const onSelect = index => {
+export const HomeBottomNavigation = (props) => {
+  const onSelect = (index) => {
     props.navigation.navigate(
       _.map(props.navigation.state.routes, "routeName")[index]
     );

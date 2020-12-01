@@ -12,7 +12,7 @@ const persistConfig = {
   storage: AsyncStorage,
   whitelist: ["rootReducer"],
   // Blacklist (Don't Save Specific Reducers)
-  blacklist: ["helperReducer"]
+  blacklist: ["helperReducer"],
 };
 
 const middlewares = [ReduxThunk];

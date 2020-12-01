@@ -1,63 +1,58 @@
+import React from "react";
 import {
   createBottomTabNavigator,
-  createStackNavigator
+  createStackNavigator,
 } from "react-navigation";
-
-import WarehouseList from "../screens/WarehouseList";
-// import SearchWarehouse from "../screens/SearchWarehouse";
-import WarehouseItems from "../screens/WarehouseItems/WarehouseItems";
+import { HomeBottomNavigation } from "../component/HomeBottomNavigation/HomeBottomNavigation";
+import History from "../screens/History/History";
 import ItemDetail from "../screens/ItemDetail/ItemDetail";
 import Profile from "../screens/Profile/Profile";
-import History from "../screens/History/History";
-
-import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
-
-import { HomeBottomNavigation } from "../component/HomeBottomNavigation/HomeBottomNavigation";
-
-import React from "react";
+// import SearchWarehouse from "../screens/SearchWarehouse";
+import WarehouseItems from "../screens/WarehouseItems/WarehouseItems";
+import WarehouseList from "../screens/WarehouseList";
 
 const assetController = createStackNavigator(
   {
     WarehouseList: {
-      screen: WarehouseList
+      screen: WarehouseList,
     },
     // SearchWarehouse: {
     //   screen: SearchWarehouse
     // },
     WarehouseItems: {
-      screen: WarehouseItems
+      screen: WarehouseItems,
     },
     ItemDetail: {
-      screen: ItemDetail
-    }
+      screen: ItemDetail,
+    },
   },
   {
-    headerMode: "none"
+    headerMode: "none",
   }
 );
 
 const profileController = createStackNavigator(
   {
     Profile: {
-      screen: Profile
-    }
+      screen: Profile,
+    },
   },
   {
-    headerMode: "none"
+    headerMode: "none",
   }
 );
 
 const historyController = createStackNavigator(
   {
     History: {
-      screen: History
+      screen: History,
     },
     updateItemDetail: {
-      screen: ItemDetail
-    }
+      screen: ItemDetail,
+    },
   },
   {
-    headerMode: "none"
+    headerMode: "none",
   }
 );
 
@@ -73,18 +68,18 @@ const historyController = createStackNavigator(
 const LoggedInNavigator = createBottomTabNavigator(
   {
     Dashboard: {
-      screen: assetController
+      screen: assetController,
     },
     History: {
-      screen: historyController
+      screen: historyController,
     },
     Profile: {
-      screen: profileController
-    }
+      screen: profileController,
+    },
   },
   {
     labeled: false,
-    tabBarComponent: props => <HomeBottomNavigation {...props} />
+    tabBarComponent: (props) => <HomeBottomNavigation {...props} />,
   }
 );
 

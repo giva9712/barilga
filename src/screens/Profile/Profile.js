@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  ToastAndroid
+  ToastAndroid,
 } from "react-native";
 import { connect } from "react-redux";
 import { removeAuth } from "../../store/actions";
@@ -17,7 +17,7 @@ import {
   TopNavigation,
   TopNavigationAction,
   Icon,
-  Input
+  Input,
 } from "@ui-kitten/components";
 
 import { useSafeArea } from "./extra/3rd-party";
@@ -26,11 +26,11 @@ import { ProfileSetting } from "./extra/ProfileSetting";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import api from "../../provider/interceptors";
 
-const PasswordIcon = style => (
-  <Icon {...style} name="ios-lock" pack="ionicons" />
+const PasswordIcon = (style) => (
+  <Icon {...style} name="ios-lock" pack="ionic" />
 );
 
-const Profile = props => {
+const Profile = (props) => {
   const { navigation } = props;
   const safeArea = useSafeArea();
   const [profile, setProfile] = useState({
@@ -40,8 +40,8 @@ const Profile = props => {
     phone: props.userInfo.phone,
     photo: {
       uri:
-        "https://previews.123rf.com/images/prettyvectors/prettyvectors1309/prettyvectors130900060/22545994-user-profile-avatar-man-icon.jpg"
-    }
+        "https://previews.123rf.com/images/prettyvectors/prettyvectors1309/prettyvectors130900060/22545994-user-profile-avatar-man-icon.jpg",
+    },
   });
 
   _showMoreApp = () => {
@@ -76,17 +76,19 @@ const Profile = props => {
   const EyeOldIcon = ({ style }) => (
     <Icon
       {...style}
+      style={{ width: 24, height: 24 }}
       onPress={() => setShowOldPassword(!showOldPassword)}
       name={showOldPassword ? "md-eye" : "md-eye-off"}
-      pack="ionicons"
+      pack="ionic"
     />
   );
   const EyeNewIcon = ({ style }) => (
     <Icon
       {...style}
+      style={{ width: 24, height: 24 }}
       onPress={() => setShowNewPassword(!showNewPassword)}
       name={showNewPassword ? "md-eye" : "md-eye-off"}
-      pack="ionicons"
+      pack="ionic"
     />
   );
   const handleUpdatePassword = () => {
@@ -95,9 +97,9 @@ const Profile = props => {
         id: profile.id,
         username: profile.username,
         password: oldPassword,
-        new_password: newPassword
+        new_password: newPassword,
       })
-      .then(res => {
+      .then((res) => {
         setShowModal(false);
         ToastAndroid.showWithGravityAndOffset(
           "Амжилттай солигдлоо!",
@@ -107,7 +109,7 @@ const Profile = props => {
           50
         );
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err.request.data);
       });
   };
@@ -152,9 +154,9 @@ const Profile = props => {
                     marginTop: 16,
                     marginBottom: 8,
 
-                    width: 300
+                    width: 300,
                   }}
-                  icon={EyeOldIcon}
+                  accessoryRight={EyeOldIcon}
                   placeholder="Хуучин нууц үг"
                   value={oldPassword}
                   onChangeText={setOldPassword}
@@ -167,13 +169,12 @@ const Profile = props => {
                     marginHorizontal: 16,
                     marginTop: 16,
                     marginBottom: 8,
-
-                    width: 300
+                    width: 300,
                   }}
                   placeholder="Шинэ нууц үг"
                   value={newPassword}
                   secureTextEntry={!showNewPassword}
-                  icon={EyeNewIcon}
+                  accessoryRight={EyeNewIcon}
                   onChangeText={setNewPassword}
                 />
               </View>
@@ -221,37 +222,37 @@ const Profile = props => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   header: {
-    marginBottom: 24
+    marginBottom: 24,
   },
   profileAvatar: {
     aspectRatio: 1.0,
     height: 124,
     alignSelf: "center",
-    marginBottom: 24
+    marginBottom: 24,
   },
   editAvatarButton: {
     aspectRatio: 1.0,
     height: 48,
-    borderRadius: 24
+    borderRadius: 24,
   },
   profileSetting: {
-    padding: 16
+    padding: 16,
   },
   section: {
-    marginTop: 24
+    marginTop: 24,
   },
   doneButton: {
-    margin: 24
+    margin: 24,
   },
   modalBackground: {
     flex: 1,
     alignItems: "center",
     flexDirection: "column",
     justifyContent: "space-around",
-    backgroundColor: "#00000040"
+    backgroundColor: "#00000040",
   },
   activityIndicatorWrapper: {
     backgroundColor: "#FFFFFF",
@@ -261,16 +262,16 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "column"
-  }
+    flexDirection: "column",
+  },
 });
 
-const mapStateToProps = state => ({
-  userInfo: state.rootReducer.userInfo
+const mapStateToProps = (state) => ({
+  userInfo: state.rootReducer.userInfo,
 });
 
-const mapDispatchToProps = dispatch => ({
-  removeAuth: () => dispatch(removeAuth())
+const mapDispatchToProps = (dispatch) => ({
+  removeAuth: () => dispatch(removeAuth()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

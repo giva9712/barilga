@@ -6,7 +6,7 @@ import {
   ToastAndroid,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  Modal
+  Modal,
 } from "react-native";
 import { Button, Input, Text, Icon } from "@ui-kitten/components";
 import { ImageOverlay } from "./extra/image-overlay.component";
@@ -17,7 +17,7 @@ import {
   rememberLogin,
   saveToken,
   saveUserInfo,
-  saveServerIP
+  saveServerIP,
 } from "../../store/actions";
 import api from "../../provider/interceptors";
 import Loader from "../../component/Loader/Loader";
@@ -30,20 +30,20 @@ import { SafeAreaLayout } from "../../component/SafeAreaLayoutComponent/SafeArea
 import { AntDesign } from "@expo/vector-icons";
 import { store } from "../../store";
 
-const PersonIcon = style => (
-  <Icon {...style} name="ios-person" pack="ionicons" />
+const PersonIcon = (style) => (
+  <Icon {...style} name="ios-person" pack="ionic" />
 );
 
-const SettingsIcon = style => (
+const SettingsIcon = (style) => (
   <Icon
-    style={{ height: 40, width: 40, color: "white" }}
     {...style}
+    style={{ height: 40, width: 40, color: "white" }}
     name="md-settings"
-    pack="ionicons"
+    pack="ionic"
   />
 );
 
-const Login = props => {
+const Login = (props) => {
   const { navigation } = props;
   const [username, setUsername] = useState(
     !!props.loginInfo ? props.loginInfo.username : ""
@@ -57,12 +57,12 @@ const Login = props => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const EyeOffIcon = style => (
+  const EyeOffIcon = (style) => (
     <Icon
       {...style}
       onPress={() => setShowPassword(!showPassword)}
       name={showPassword ? "md-eye" : "md-eye-off"}
-      pack="ionicons"
+      pack="ionic"
     />
   );
   useEffect(() => {}, []);
@@ -73,16 +73,16 @@ const Login = props => {
       .post("/login", {
         username: username,
         password: password,
-        role: 3
+        role: 3,
       })
-      .then(res => {
+      .then((res) => {
         setLoading(false);
         if (res.data.token) {
           let { token, ...userInfo } = res.data;
           if (remember) {
             props.rememberLogin({
               username,
-              password: null
+              password: null,
             });
           } else {
             props.rememberLogin(null);
@@ -92,7 +92,7 @@ const Login = props => {
           navigation.navigate("LoggedIn");
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.response && err.response.data.error)
           ToastAndroid.showWithGravityAndOffset(
             err.response.data.error,
@@ -155,7 +155,7 @@ const Login = props => {
                     position: "absolute",
                     zIndex: 99,
                     top: 20,
-                    right: 20
+                    right: 20,
                   }}
                 >
                   <AntDesign
@@ -171,7 +171,7 @@ const Login = props => {
                       marginTop: 16,
                       marginBottom: 8,
 
-                      width: 300
+                      width: 300,
                     }}
                     placeholder="http://host-address/api"
                     value={serverIP}
@@ -200,11 +200,11 @@ const Login = props => {
               position: "absolute",
               top: 0,
               right: 0,
-              width: 80
+              width: 80,
             }}
             appearance="ghost"
             onPress={() => setShowModal(true)}
-            icon={SettingsIcon}
+            accessoryLeft={SettingsIcon}
           />
 
           <View style={styles.headerContainer}>
@@ -212,7 +212,7 @@ const Login = props => {
               style={{
                 width: 250,
                 height: 200,
-                resizeMode: "stretch"
+                resizeMode: "stretch",
               }}
               source={require("../../../assets/images/logo.jpg")}
             />
@@ -223,7 +223,7 @@ const Login = props => {
               placeholder="Нэвтрэх"
               value={username}
               onChangeText={setUsername}
-              icon={PersonIcon}
+              accessoryLeft={PersonIcon}
             />
             <Input
               style={styles.passwordInput}
@@ -232,13 +232,13 @@ const Login = props => {
               value={password}
               secureTextEntry={!showPassword}
               onChangeText={setPassword}
-              icon={EyeOffIcon}
+              accessoryLeft={EyeOffIcon}
             />
             <View
               style={{
                 justifyContent: "center",
                 flex: 1,
-                flexDirection: "row"
+                flexDirection: "row",
               }}
             >
               <CheckBox
@@ -277,38 +277,38 @@ const Login = props => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   headerContainer: {
     minHeight: 216,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 50,
-    padding: 30
+    padding: 30,
   },
   formContainer: {
     flex: 1,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   signInLabel: {
-    marginTop: 16
+    marginTop: 16,
   },
   passwordInput: {
-    marginTop: 16
+    marginTop: 16,
   },
   signInButton: {
     marginHorizontal: 16,
-    marginVertical: 50
+    marginVertical: 50,
   },
   doneButton: {
-    margin: 24
+    margin: 24,
   },
   modalBackground: {
     flex: 1,
     alignItems: "center",
     flexDirection: "column",
     justifyContent: "space-around",
-    backgroundColor: "#00000040"
+    backgroundColor: "#00000040",
   },
   activityIndicatorWrapper: {
     backgroundColor: "#FFFFFF",
@@ -318,19 +318,19 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "column"
-  }
+    flexDirection: "column",
+  },
 });
 
-const mapStateToProps = state => ({
-  loginInfo: state.rootReducer.loginInfo
+const mapStateToProps = (state) => ({
+  loginInfo: state.rootReducer.loginInfo,
 });
 
-const mapDispatchToProps = dispatch => ({
-  rememberLogin: loginInfo => dispatch(rememberLogin(loginInfo)),
-  saveToken: token => dispatch(saveToken(token)),
-  saveUserInfo: userInfo => dispatch(saveUserInfo(userInfo)),
-  saveServerIP: serverIP => dispatch(saveServerIP(serverIP))
+const mapDispatchToProps = (dispatch) => ({
+  rememberLogin: (loginInfo) => dispatch(rememberLogin(loginInfo)),
+  saveToken: (token) => dispatch(saveToken(token)),
+  saveUserInfo: (userInfo) => dispatch(saveUserInfo(userInfo)),
+  saveServerIP: (serverIP) => dispatch(saveServerIP(serverIP)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

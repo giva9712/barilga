@@ -14,11 +14,9 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 
-import {
-  MaterialCommunityIcons,
-  Ionicons,
-  FeatherIcons
-} from "./src/component/IconMapper/IconMapper";
+import { MaterialIconsPack } from "./src/component/IconMapper/MaterialIcon";
+import { IonicIconsPack } from "./src/component/IconMapper/IonicIcon";
+import { FeatherIconsPack } from "./src/component/IconMapper/FeatherIcon";
 
 import { IconRegistry } from "@ui-kitten/components";
 import { mapping, light as lightTheme } from "@eva-design/eva";
@@ -43,10 +41,10 @@ const App = () => {
     SplashScreen.hide();
     const images = [
       require("./assets/images/bg.jpg"),
-      require("./assets/images/logo.jpg")
+      require("./assets/images/logo.jpg"),
     ];
 
-    const cacheImages = images.map(image => {
+    const cacheImages = images.map((image) => {
       return Asset.fromModule(image).downloadAsync();
     });
 
@@ -78,7 +76,7 @@ const App = () => {
         style={{
           flex: 1,
           backgroundColor: "#00aff0",
-          justifyContent: "center"
+          justifyContent: "center",
         }}
       >
         <Image
@@ -86,7 +84,7 @@ const App = () => {
             flex: 1,
             resizeMode: "contain",
             width: undefined,
-            height: undefined
+            height: undefined,
           }}
           source={require("./assets/splash.png")}
           onLoad={_cacheResourcesAsync}
@@ -99,7 +97,7 @@ const App = () => {
             right: 0,
             bottom: 0,
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
           <ActivityIndicator size="large" color="#fff" />
@@ -117,9 +115,9 @@ const App = () => {
           <IconRegistry
             icons={[
               EvaIconsPack,
-              MaterialCommunityIcons,
-              Ionicons,
-              FeatherIcons
+              MaterialIconsPack,
+              IonicIconsPack,
+              FeatherIconsPack,
             ]}
           />
           <CustomApplicationProvider mapping={mapping} theme={lightTheme}>
