@@ -30,6 +30,7 @@ import { changeRefresh } from "../../store/actions";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 
 import { MaterialIcons } from "@expo/vector-icons";
+import _ from "lodash";
 
 const noAvailableImage = require("../../../assets/images/No_picture_available.png");
 
@@ -58,19 +59,17 @@ const ItemDetail = (props) => {
 
   const _isMounted = useRef(null);
 
-  const [isHouseTransaction, setIsHouseTransaction] = useState(false);
-
-  const [selectedHouseValue, setSelectedHouseValue] = useState({
-    name: null,
-  });
+  const [isHouseTransaction, setIsHouseTransaction] = useState(
+    itemDetail.is_income === 2 ? true : false
+  );
+  const [selectedHouseValue, setSelectedHouseValue] = useState([]);
   const [houses, setHouses] = useState([]);
-  const [autocompleteData, setAutocompleteData] = useState([]);
-  const onSelectedItemsChange = (selectedItems) => {
-    setAutocompleteData(selectedItems);
-  };
 
+  const onSelectedItemsChange = (selectedItems) => {
+    setSelectedHouseValue(selectedItems);
+  };
   const [updating, setUpdating] = useState({
-    isIncome: itemDetail.is_income ? true : false,
+    isIncome: itemDetail.is_income === 1 ? true : false,
     value: itemDetail.is_income
       ? itemDetail.in_count
         ? itemDetail.in_count
@@ -90,56 +89,104 @@ const ItemDetail = (props) => {
 
   _saveUpdates = () => {
     setLoading(true);
-    if (
-      ((!updating.isIncome && isNotEmpty) || updating.isIncome) &&
-      updating.value > 0
-    ) {
-      api
-        .post("/save-item-tran", {
-          item_id: itemDetail.item_id,
-          warehouse_id: itemDetail.warehouse_id,
-          in_count: updating.isIncome ? updating.value : 0,
-          out_count: !updating.isIncome ? updating.value : 0,
-          is_income: updating.isIncome,
-          description: controlInputChanges.value,
-          created_by: created_by,
-          ...(itemDetail.id && { id: itemDetail.id }),
-        })
-        .then((res) => {
-          if (itemDetail.id == null)
-            ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
-          else {
-            ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
-          }
-          props.changeRefresh(true);
-          navigation.goBack();
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err.response);
-          console.log(err.response.data.error);
-          setLoading(false);
-          ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
-        });
-    } else if (updating.value <= 0) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Гүйлгээний тоо буруу байна!",
-        ToastAndroid.LONG,
-        ToastAndroid.CENTER,
-        25,
-        50
-      );
-
-      setLoading(false);
+    if (isHouseTransaction) {
+      if (!selectedHouseValue.length > 0) {
+        ToastAndroid.showWithGravityAndOffset(
+          "Шилжүүлэх агуулга сонгоно уу!",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+          25,
+          50
+        );
+        setLoading(false);
+      } else if (!updating.value > 0) {
+        ToastAndroid.showWithGravityAndOffset(
+          "Гүйлгээний утга хоосон байж болохгүй!",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+          25,
+          50
+        );
+        setLoading(false);
+      } else if (selectedHouseValue.length > 0 && updating.value > 0) {
+        api
+          .post("/transfer-item-tran", {
+            item_id: itemDetail.item_id,
+            warehouse_id: itemDetail.warehouse_id,
+            to_warehouse_id: selectedHouseValue[0],
+            out_count: updating.value,
+            created_by: created_by,
+            ...(itemDetail.id && { id: itemDetail.id }),
+          })
+          .then((res) => {
+            if (itemDetail.id == null)
+              ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
+            else {
+              ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
+            }
+            props.changeRefresh(true);
+            navigation.goBack();
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err.response);
+            console.log(err.response.data.error);
+            setLoading(false);
+            ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
+          });
+      }
     } else {
-      ToastAndroid.showWithGravityAndOffset(
-        "Гүйлгээний утга хоосон байж болохгүй!",
-        ToastAndroid.LONG,
-        ToastAndroid.CENTER,
-        25,
-        50
-      );
-      setLoading(false);
+      if (
+        ((!updating.isIncome && isNotEmpty) || updating.isIncome) &&
+        updating.value > 0
+      ) {
+        api
+          .post("/save-item-tran", {
+            item_id: itemDetail.item_id,
+            warehouse_id: itemDetail.warehouse_id,
+            in_count: updating.isIncome ? updating.value : 0,
+            out_count: !updating.isIncome ? updating.value : 0,
+            is_income: updating.isIncome,
+            description: controlInputChanges.value,
+            created_by: created_by,
+            ...(itemDetail.id && { id: itemDetail.id }),
+          })
+          .then((res) => {
+            if (itemDetail.id == null)
+              ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
+            else {
+              ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
+            }
+            props.changeRefresh(true);
+            navigation.goBack();
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err.response);
+            console.log(err.response.data.error);
+            setLoading(false);
+            ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
+          });
+      } else if (updating.value <= 0) {
+        ToastAndroid.showWithGravityAndOffset(
+          "Гүйлгээний тоо буруу байна!",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+          25,
+          50
+        );
+
+        setLoading(false);
+      } else {
+        ToastAndroid.showWithGravityAndOffset(
+          "Гүйлгээний утга хоосон байж болохгүй!",
+          ToastAndroid.LONG,
+          ToastAndroid.CENTER,
+          25,
+          50
+        );
+        setLoading(false);
+      }
     }
   };
 
@@ -165,19 +212,17 @@ const ItemDetail = (props) => {
         if (_isMounted.current) {
           setLoading(false);
           setHouses(res.data.data);
-          setAutocompleteData(res.data.data);
         }
       })
       .catch((err) => {
-        console.log(err.request.body);
+        console.log(err);
         setLoading(false);
       });
   };
 
   const isNotEmpty =
     controlInputChanges.value && controlInputChanges.value.length > 0;
-
-  const color = updating.isIncome ? "#7ED32E" : "#FF3A3A";
+  const color = updating.isIncome ? "#28a745" : "#dc3545";
   scrollRef = React.createRef();
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
@@ -207,37 +252,18 @@ const ItemDetail = (props) => {
                   width: 240,
                   justifyContent: "center",
                 }}
+                resizeMode={"cover"}
+                key={
+                  itemDetail && itemDetail.img_path
+                    ? itemDetail.img_path
+                    : noAvailableImage
+                }
                 source={
-                  !!itemDetail.img_path
+                  itemDetail && itemDetail.img_path
                     ? { uri: itemDetail.img_path }
                     : noAvailableImage
                 }
               />
-            </View>
-            <View
-              style={{
-                width: "100%",
-                flex: 1,
-                flexDirection: "row",
-                marginBottom: 15,
-                justifyContent: "center",
-              }}
-            >
-              <CheckBox
-                style={styles.checkbox}
-                checked={isHouseTransaction}
-                onChange={(nextChecked) => {
-                  setIsHouseTransaction(nextChecked);
-                  if (nextChecked) {
-                    setUpdating({
-                      ...updating,
-                      isIncome: false,
-                    });
-                  }
-                }}
-              >
-                Агуулах хоорондын шилжүүлэг
-              </CheckBox>
             </View>
             <View
               style={{
@@ -255,8 +281,8 @@ const ItemDetail = (props) => {
               <View style={{ width: "50%" }}>
                 <ToggleSwitch
                   isOn={updating.isIncome}
-                  onColor="#7ED32E"
-                  offColor="#FF3A3A"
+                  onColor="#28a745"
+                  offColor="#dc3545"
                   label={updating.isIncome ? "Орлого" : `Зарлага`}
                   labelStyle={{ color: "black", fontWeight: "900" }}
                   size="large"
@@ -322,41 +348,96 @@ const ItemDetail = (props) => {
                 leftButtonBackgroundColor={color}
               />
             </View>
+            <View
+              style={{
+                width: "100%",
+                flex: 1,
+                flexDirection: "row",
+                marginVertical: 15,
+                // marginBottom: 15,
+                justifyContent: "center",
+              }}
+            >
+              <CheckBox
+                style={styles.checkbox}
+                checked={isHouseTransaction}
+                disabled={itemDetail.is_income === 2}
+                onChange={(nextChecked) => {
+                  if (itemDetail.is_income !== 2) {
+                    setIsHouseTransaction(nextChecked);
+                    if (nextChecked) {
+                      setUpdating({
+                        ...updating,
+                        isIncome: false,
+                      });
+                    }
+                  } else {
+                    ToastAndroid.showWithGravityAndOffset(
+                      "Агуулга хоорондох шилжүүлэг учир төрөл өөрчлөх боломжгүй!",
+                      ToastAndroid.LONG,
+                      ToastAndroid.CENTER,
+                      25,
+                      50
+                    );
+                  }
+                }}
+              >
+                Агуулах хоорондын шилжүүлэг
+              </CheckBox>
+            </View>
             <View style={styles.controlContainer}>
               {isHouseTransaction ? (
-                <SectionedMultiSelect
-                  items={houses}
-                  single={true}
-                  IconRenderer={MaterialIcons}
-                  uniqueKey="id"
-                  subKey="children"
-                  selectText="Шилжүүлэх агуулах сонгох..."
-                  onSelectedItemsChange={onSelectedItemsChange}
-                  selectedItems={autocompleteData}
-                  loading={loading}
-                  searchPlaceholderText="Агуулах хайх..."
-                  noResultsComponent={<Text>Ямар ч үр дүн алга.</Text>}
-                  noItemsComponent={<Text>Бүртгэгдсэн агуулга алга.</Text>}
-                  confirmText="Хаах"
-                  onToggleSelector={(selected) => {
-                    if (selected) {
-                      _fetchData();
-                    }
+                <View
+                  style={{
+                    width: 250,
+                    borderRadius: 4,
+                    // flexDirection: "row",
+                    // justifyContent: "center",
+                    borderWidth: 1,
+                    borderColor:
+                      selectedHouseValue.length > 0 ? "#28a745" : "#dc3545",
                   }}
-                />
+                >
+                  <SectionedMultiSelect
+                    items={houses}
+                    single={true}
+                    IconRenderer={MaterialIcons}
+                    uniqueKey="id"
+                    subKey="children"
+                    selectText="Шилжүүлэх агуулах сонгох..."
+                    onSelectedItemsChange={onSelectedItemsChange}
+                    selectedItems={selectedHouseValue}
+                    loading={loading}
+                    searchPlaceholderText="Агуулах хайх..."
+                    noResultsComponent={<Text>Ямар ч үр дүн алга.</Text>}
+                    noItemsComponent={<Text>Бүртгэгдсэн агуулга алга.</Text>}
+                    confirmText="Хаах"
+                    onToggleSelector={(selected) => {
+                      if (selected) {
+                        _fetchData();
+                      }
+                    }}
+                  />
+                </View>
               ) : (
-                <Input
-                  status={
-                    isNotEmpty || updating.isIncome ? "primary" : "danger"
-                  }
-                  caption={
-                    isNotEmpty || updating.isIncome
-                      ? ""
-                      : "Хоосон байж болохгүй!"
-                  }
-                  placeholder="Гүйлгээний утга"
-                  {...controlInputChanges}
-                />
+                <View
+                  style={{
+                    width: 250,
+                  }}
+                >
+                  <Input
+                    status={
+                      isNotEmpty || updating.isIncome ? "primary" : "danger"
+                    }
+                    caption={
+                      isNotEmpty || updating.isIncome
+                        ? ""
+                        : "Хоосон байж болохгүй!"
+                    }
+                    placeholder="Гүйлгээний утга"
+                    {...controlInputChanges}
+                  />
+                </View>
               )}
             </View>
             <View
@@ -368,13 +449,20 @@ const ItemDetail = (props) => {
             >
               <Button
                 disabled={loading}
+                status={
+                  itemDetail.id
+                    ? "warning"
+                    : updating.isIncome
+                    ? "success"
+                    : "danger"
+                }
                 style={{ width: 230 }}
                 onPress={() => _saveUpdates()}
               >
                 {loading
                   ? "Түр хүлээнэ үү ..."
                   : itemDetail.id
-                  ? "Засах/Өөрчлөх"
+                  ? "Засах"
                   : updating.isIncome
                   ? "Орлогдох"
                   : "Зарлагдах"}
@@ -403,9 +491,10 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   controlContainer: {
-    borderRadius: 4,
-    margin: 8,
-    marginHorizontal: 30,
+    marginVertical: 10,
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
     // backgroundColor: "#3366FF"
   },
   checkbox: {

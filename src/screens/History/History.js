@@ -10,7 +10,7 @@ import {
   TabBar,
   Text,
   List,
-  Card
+  Card,
 } from "@ui-kitten/components";
 
 import { DatePickerDialog } from "react-native-datepicker-dialog";
@@ -22,7 +22,7 @@ import api from "../../provider/interceptors";
 import { store } from "../../store";
 import _ from "lodash";
 
-const History = props => {
+const History = (props) => {
   const { navigation } = props;
 
   const _isMounted = useRef(true);
@@ -50,15 +50,21 @@ const History = props => {
           begin_date: moment(startDate).format("YYYY-MM-DD"),
           end_date: moment(endDate).format("YYYY-MM-DD"),
           created_by: created_by,
-          warehouse_id: null
-        }
+          img_size: "200x200",
+          warehouse_id: null,
+        },
       })
-      .then(res => {
+      .then((res) => {
         setLoading(false);
+        console.log(res.data.data);
         if (selectedIndex == 0) {
           setIncomeHistoryData(
             _.orderBy(
-              _.filter(res.data.data, { is_income: 1 }),
+              _.filter(
+                res.data.data,
+                (his) =>
+                  his.is_income == 1 || (his.is_income == 2 && his.in_count > 0)
+              ),
               "created_date",
               "desc"
             )
@@ -66,14 +72,19 @@ const History = props => {
         } else {
           setExpenseHistoryData(
             _.orderBy(
-              _.filter(res.data.data, { is_income: 0 }),
+              _.filter(
+                res.data.data,
+                (his) =>
+                  his.is_income == 0 ||
+                  (his.is_income == 2 && his.out_count > 0)
+              ),
               "created_date",
               "desc"
             )
           );
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         setLoading(false);
       });
@@ -86,23 +97,23 @@ const History = props => {
   const showStartDateDialog = () => {
     startDateRef.current.open({
       date: startDate,
-      maxDate: new Date() //To restirct future date
+      maxDate: new Date(), //To restirct future date
     });
   };
 
   const showEndDateDialog = () => {
     endDateRef.current.open({
       date: endDate,
-      maxDate: new Date() //To restirct future date
+      maxDate: new Date(), //To restirct future date
     });
   };
 
   useEffect(() => {
-    const did_focus = navigation.addListener("didFocus", payload => {
+    const did_focus = navigation.addListener("didFocus", (payload) => {
       _isMounted.current = true;
       _fetchData();
     });
-    const did_blur = navigation.addListener("didBlur", payload => {
+    const did_blur = navigation.addListener("didBlur", (payload) => {
       _isMounted.current = false;
       setIncomeHistoryData([]);
       setExpenseHistoryData([]);
@@ -139,12 +150,18 @@ const History = props => {
           flexDirection: "row",
           flexWrap: "wrap",
           alignItems: "flex-start",
-          marginTop: 20
+          marginTop: 20,
         }}
       >
         <View style={{ width: "50%" }}>
-          <Text style={{ ...styles.itemDescription }} appearance="hint">
-            {item.description}
+          <Text
+            style={{
+              ...styles.itemDescription,
+              color: item.is_income === 2 ? "#17a2b8" : "gray",
+            }}
+            appearance="hint"
+          >
+            {item.is_income === 2 ? "Агуулах хооронд" : item.description}
           </Text>
         </View>
         <View style={{ width: "50%", textAlign: "right" }}>
@@ -159,7 +176,7 @@ const History = props => {
           right: 30,
           top: 33,
           fontSize: 20,
-          zIndex: 1
+          zIndex: 1,
         }}
         item={item}
         isIncome={true}
@@ -167,9 +184,9 @@ const History = props => {
     </Card>
   );
 
-  const gotoHistory = item => {
+  const gotoHistory = (item) => {
     navigation.navigate("updateItemDetail", {
-      item: { ...item, id: item.id, name: item.item_name }
+      item: { ...item, id: item.id, name: item.item_name },
     });
   };
 
@@ -191,12 +208,18 @@ const History = props => {
           flexDirection: "row",
           flexWrap: "wrap",
           alignItems: "flex-start",
-          marginTop: 20
+          marginTop: 20,
         }}
       >
         <View style={{ width: "50%" }}>
-          <Text style={{ ...styles.itemDescription }} appearance="hint">
-            {item.description}
+          <Text
+            style={{
+              ...styles.itemDescription,
+              color: item.is_income === 2 ? "#17a2b8" : "gray",
+            }}
+            appearance="hint"
+          >
+            {item.is_income === 2 ? "Агуулах хооронд" : item.description}
           </Text>
         </View>
         <View style={{ width: "50%", textAlign: "right" }}>
@@ -211,7 +234,7 @@ const History = props => {
           right: 30,
           top: 33,
           fontSize: 20,
-          zIndex: 1
+          zIndex: 1,
         }}
         item={item}
         isIncome={false}
@@ -230,7 +253,7 @@ const History = props => {
                   paddingVertical: 30,
                   flex: 1,
                   justifyContent: "center",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
               >
                 <Spinner size="giant" />
@@ -253,7 +276,7 @@ const History = props => {
                   paddingVertical: 30,
                   flex: 1,
                   justifyContent: "center",
-                  alignItems: "center"
+                  alignItems: "center",
                 }}
               >
                 <Spinner size="giant" />
@@ -304,7 +327,7 @@ const History = props => {
         style={{
           marginTop: 10,
           borderBottomColor: "#b7b7b7",
-          borderBottomWidth: 2
+          borderBottomWidth: 2,
         }}
       />
       <PTRView onRefresh={_refresh}>
@@ -319,11 +342,11 @@ const History = props => {
 const styles = StyleSheet.create({
   tabContainer: {
     minHeight: 150,
-    flex: 1
+    flex: 1,
   },
   input: {
     flex: 1,
-    margin: 8
+    margin: 8,
   },
   datePickerBox: {
     marginTop: 9,
@@ -336,7 +359,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
     height: 38,
     justifyContent: "center",
-    flexDirection: "row"
+    flexDirection: "row",
   },
   datePickerText: {
     flex: 1,
@@ -344,12 +367,12 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     borderWidth: 0,
     color: "#121212",
-    alignSelf: "center"
+    alignSelf: "center",
   },
   noData: {
     paddingVertical: 20,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
 
 History.propTypes = {};

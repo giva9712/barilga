@@ -3,11 +3,9 @@
  * Copyright Akveo. All Rights Reserved.
  * Licensed under the MIT License. See License.txt in the project root for license information.
  */
-import React from "react";
-import merge from "lodash.merge";
-import { SchemaProcessor } from "@eva-design/processor";
-import { StyleProvider } from "@ui-kitten/components/theme/style/styleProvider.component";
 import { ModalPanel } from "@ui-kitten/components/theme/modal/modalPanel.component";
+import { StyleProvider } from "@ui-kitten/components/theme/style/styleProvider.component";
+import React from "react";
 import styles from "./style.json";
 
 // import mapping from "./mapped.json"

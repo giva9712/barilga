@@ -1,14 +1,14 @@
 {
   "expo": {
     "name": "GDSC WHMS",
-    "slug": "gdsc_v7",
-    "description": "Extra job!",
+    "slug": "gdsc_v8",
+    "description": "Part-time job!",
     "privacy": "public",
     "sdkVersion": "37.0.0",
     "platforms": [
       "android"
     ],
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,7 @@
     ],
     "ios": {
       "bundleIdentifier": "mn.gdsc.gdsc",
-      "buildNumber": "7.0.0"
+      "buildNumber": "8.0.0"
     },
     "android": {
       "package": "mn.gdsc.gdsc"

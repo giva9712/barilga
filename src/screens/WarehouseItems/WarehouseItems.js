@@ -26,8 +26,6 @@ const IOSArrowBack = (style) => (
   <Icon {...style} name="ios-arrow-back" pack="ionic" />
 );
 
-const SearchIcon = (style) => <Icon {...style} name="search" pack="feather" />;
-
 const WarehouseItems = (props) => {
   const { navigation } = props;
 
@@ -42,12 +40,16 @@ const WarehouseItems = (props) => {
 
   const [showSearch, setShowSearch] = useState(false);
 
-  const InputIcon = (style) => (
+  const SearchIcon = (style) => (
+    <Icon {...style} name={"search"} pack={"feather"} />
+  );
+
+  const CloseIcon = (style) => (
     <Icon
       {...style}
       onPress={onIconPress}
-      name={!!searchQuery ? "md-close-circle" : "search"}
-      pack={!!searchQuery ? "ionic" : "feather"}
+      name={"md-close-circle"}
+      pack={"ionic"}
     />
   );
 
@@ -182,8 +184,8 @@ const WarehouseItems = (props) => {
             placeholder="Хайх"
             onChangeText={(text) => setSearchQuery(text)}
             value={searchQuery}
-            accessoryLeft={InputIcon}
-            onIconPress={onIconPress}
+            accessoryLeft={SearchIcon}
+            accessoryRight={!!searchQuery ? CloseIcon : null}
           />
         )}
 
