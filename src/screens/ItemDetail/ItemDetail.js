@@ -30,7 +30,7 @@ import { changeRefresh } from "../../store/actions";
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import _ from "lodash";
+import _, { max } from "lodash";
 
 const noAvailableImage = require("../../../assets/images/No_picture_available.png");
 
@@ -62,26 +62,38 @@ const ItemDetail = (props) => {
   const [isHouseTransaction, setIsHouseTransaction] = useState(
     itemDetail.is_income === 2 ? true : false
   );
-  const [selectedHouseValue, setSelectedHouseValue] = useState([]);
   const [houses, setHouses] = useState([]);
 
   const onSelectedItemsChange = (selectedItems) => {
     setSelectedHouseValue(selectedItems);
   };
   const [updating, setUpdating] = useState({
-    isIncome: itemDetail.is_income === 1 ? true : false,
-    value: itemDetail.is_income
-      ? itemDetail.in_count
+    isIncome:
+      itemDetail.is_income === 1
+        ? true
+        : itemDetail.is_income === 2 && itemDetail.in_count > 0,
+    value: itemDetail.id
+      ? itemDetail.is_income === 1
         ? itemDetail.in_count
-        : 1
-      : itemDetail.out_count
-      ? itemDetail.out_count
+        : itemDetail.is_income === 0
+        ? itemDetail.out_count
+        : itemDetail.in_count + itemDetail.out_count
       : 1,
   });
 
+  const [selectedHouseValue, setSelectedHouseValue] = useState(
+    itemDetail.id
+      ? [
+          updating.isIncome
+            ? itemDetail.warehouse_id
+            : itemDetail.to_warehouse_id,
+        ]
+      : []
+  );
+
   useEffect(() => {
     _isMounted.current = true;
-    // _fetchData();
+    _fetchData();
     return () => {
       _isMounted.current = false;
     };
@@ -109,11 +121,15 @@ const ItemDetail = (props) => {
         );
         setLoading(false);
       } else if (selectedHouseValue.length > 0 && updating.value > 0) {
+        const toWareHouse = houses.find(
+          (house) => house.id === selectedHouseValue[0]
+        );
         api
           .post("/transfer-item-tran", {
             item_id: itemDetail.item_id,
             warehouse_id: itemDetail.warehouse_id,
-            to_warehouse_id: selectedHouseValue[0],
+            to_warehouse_id: toWareHouse.id,
+            to_warehouse_name: toWareHouse.name,
             out_count: updating.value,
             created_by: created_by,
             ...(itemDetail.id && { id: itemDetail.id }),
@@ -122,7 +138,7 @@ const ItemDetail = (props) => {
             if (itemDetail.id == null)
               ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
             else {
-              ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
+              ToastAndroid.show("Амжилттай засагдлаа!", ToastAndroid.SHORT);
             }
             props.changeRefresh(true);
             navigation.goBack();
@@ -132,7 +148,7 @@ const ItemDetail = (props) => {
             console.log(err.response);
             console.log(err.response.data.error);
             setLoading(false);
-            ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
+            ToastAndroid.show(err.response.data.error, ToastAndroid.LONG);
           });
       }
     } else {
@@ -155,7 +171,7 @@ const ItemDetail = (props) => {
             if (itemDetail.id == null)
               ToastAndroid.show("Амжилттай нэмэгдлээ!", ToastAndroid.SHORT);
             else {
-              ToastAndroid.show("Амжилттай шинэчлэгдлээ!", ToastAndroid.SHORT);
+              ToastAndroid.show("Амжилттай засагдлаа!", ToastAndroid.SHORT);
             }
             props.changeRefresh(true);
             navigation.goBack();
@@ -165,7 +181,7 @@ const ItemDetail = (props) => {
             console.log(err.response);
             console.log(err.response.data.error);
             setLoading(false);
-            ToastAndroid.show(err.response.data.error, ToastAndroid.SHORT);
+            ToastAndroid.show(err.response.data.error, ToastAndroid.LONG);
           });
       } else if (updating.value <= 0) {
         ToastAndroid.showWithGravityAndOffset(
@@ -224,6 +240,7 @@ const ItemDetail = (props) => {
     controlInputChanges.value && controlInputChanges.value.length > 0;
   const color = updating.isIncome ? "#28a745" : "#dc3545";
   scrollRef = React.createRef();
+  console.log(itemDetail);
   return (
     <SafeAreaLayout insets="top" level="2" style={{ flex: 1 }}>
       <TopNavigation
@@ -293,13 +310,23 @@ const ItemDetail = (props) => {
                         isIncome: !updating.isIncome,
                       });
                     } else {
-                      ToastAndroid.showWithGravityAndOffset(
-                        "Агуулах хоорондын шилжүүлэг үед орлого хийж болохгүй!",
-                        ToastAndroid.LONG,
-                        ToastAndroid.CENTER,
-                        25,
-                        50
-                      );
+                      if (itemDetail.is_income === 2) {
+                        ToastAndroid.showWithGravityAndOffset(
+                          "Шилжүүлгийн түүх засаж байгаа тул төлөв өөрчилж болохгүй!",
+                          ToastAndroid.LONG,
+                          ToastAndroid.CENTER,
+                          25,
+                          50
+                        );
+                      } else {
+                        ToastAndroid.showWithGravityAndOffset(
+                          "Агуулах хоорондын шилжүүлэг үед орлого хийж болохгүй!",
+                          ToastAndroid.LONG,
+                          ToastAndroid.CENTER,
+                          25,
+                          50
+                        );
+                      }
                     }
                   }}
                 />
@@ -327,13 +354,15 @@ const ItemDetail = (props) => {
                 value={parseInt(updating.value)}
                 onChange={(value) => setUpdating({ ...updating, value })}
                 onLimitReached={(isMax, msg) => {
-                  ToastAndroid.showWithGravityAndOffset(
-                    "Гүйлгээний тоо буруу байна!",
-                    ToastAndroid.SHORT,
-                    ToastAndroid.CENTER,
-                    25,
-                    50
-                  );
+                  if (updating.value == 1) {
+                    ToastAndroid.showWithGravityAndOffset(
+                      "Гүйлгээний утга хамгийн багадаа 1 байх ёстой!",
+                      ToastAndroid.LONG,
+                      ToastAndroid.CENTER,
+                      25,
+                      50
+                    );
+                  }
                 }}
                 totalWidth={240}
                 totalHeight={50}
@@ -404,7 +433,13 @@ const ItemDetail = (props) => {
                     IconRenderer={MaterialIcons}
                     uniqueKey="id"
                     subKey="children"
-                    selectText="Шилжүүлэх агуулах сонгох..."
+                    selectText={
+                      selectedHouseValue.length > 0
+                        ? updating.isIncome
+                          ? itemDetail.warehouse_name
+                          : itemDetail.to_warehouse_name
+                        : "Шилжүүлэх агуулах сонгох..."
+                    }
                     onSelectedItemsChange={onSelectedItemsChange}
                     selectedItems={selectedHouseValue}
                     loading={loading}
